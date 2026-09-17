@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sprout, LayoutDashboard, Stethoscope, CloudSun, BarChart3, User, LogIn, Menu, X, Globe, Type, Bell } from 'lucide-react';
+import { Sprout, LayoutDashboard, Stethoscope, CloudSun, BarChart3, User, LogIn, UserPlus, Menu, X, Globe, Type, Bell } from 'lucide-react';
 import { Language, FarmerProfile, WeatherAlert } from '../types';
 import { translations, languageNames } from '../lib/translations';
 
@@ -172,10 +172,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   <button
                     onClick={() => setCurrentTab('profile')}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-800 hover:bg-emerald-700 text-white transition-colors cursor-pointer"
+                    className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-emerald-800 hover:bg-emerald-700 text-white transition-colors cursor-pointer border border-emerald-600/50"
                     title="Farmer Profile & Farm Settings"
                   >
-                    <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs border border-emerald-400">
+                    <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-xs border border-emerald-300">
                       {user.name.charAt(0).toUpperCase()}
                     </div>
                     <span className="hidden md:inline text-xs font-semibold truncate max-w-[100px]">
@@ -184,25 +184,33 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </button>
                   <button
                     onClick={() => onOpenAuth('login')}
-                    className={`hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                    className={`inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
                       currentTab === 'login'
                         ? 'bg-emerald-700 text-white border border-emerald-500'
                         : 'text-emerald-200 hover:text-white hover:bg-emerald-800/80 border border-emerald-700/60'
                     }`}
-                    title="Switch Account / Login Portal"
+                    title="Login or Switch Farmer Account"
                   >
                     <LogIn className="w-3.5 h-3.5" />
-                    <span>Switch</span>
+                    <span>Login</span>
+                  </button>
+                  <button
+                    onClick={() => onOpenAuth('signup')}
+                    className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-bold rounded-lg bg-amber-400 hover:bg-amber-300 text-stone-950 transition-colors shadow-sm cursor-pointer"
+                    title="Register New Farmer"
+                  >
+                    <UserPlus className="w-3.5 h-3.5" />
+                    <span>Sign Up</span>
                   </button>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => onOpenAuth('login')}
-                    className={`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer ${
                       currentTab === 'login'
                         ? 'bg-amber-400 text-stone-950 font-black shadow-md ring-2 ring-amber-300'
-                        : 'bg-emerald-800 hover:bg-emerald-700 text-white'
+                        : 'bg-emerald-800 hover:bg-emerald-700 text-white border border-emerald-600/60'
                     }`}
                   >
                     <LogIn className="w-3.5 h-3.5" />
@@ -210,9 +218,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </button>
                   <button
                     onClick={() => onOpenAuth('signup')}
-                    className="hidden sm:inline-flex px-3.5 py-1.5 text-xs font-bold rounded-lg bg-emerald-400 hover:bg-emerald-300 text-emerald-950 transition-colors shadow-sm cursor-pointer"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold rounded-lg bg-amber-400 hover:bg-amber-300 text-stone-950 transition-colors shadow-sm cursor-pointer"
                   >
-                    {t.signup}
+                    <UserPlus className="w-3.5 h-3.5" />
+                    <span>{t.signup}</span>
                   </button>
                 </div>
               )}
@@ -273,36 +282,50 @@ export const Navbar: React.FC<NavbarProps> = ({
                     {t.logout}
                   </button>
                 </div>
-                <button
-                  onClick={() => {
-                    onOpenAuth('login');
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-emerald-800/60 hover:bg-emerald-800 text-emerald-200 hover:text-white text-xs font-semibold border border-emerald-700/60 transition-colors"
-                >
-                  <LogIn className="w-3.5 h-3.5" />
-                  <span>Switch Farmer Account / Login Portal</span>
-                </button>
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <button
+                    onClick={() => {
+                      onOpenAuth('login');
+                      setMobileMenuOpen(false);
+                    }}
+                    className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-emerald-800/80 hover:bg-emerald-800 text-white text-xs font-bold border border-emerald-700/60 transition-colors cursor-pointer"
+                  >
+                    <LogIn className="w-3.5 h-3.5" />
+                    <span>Login Portal</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      onOpenAuth('signup');
+                      setMobileMenuOpen(false);
+                    }}
+                    className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-stone-950 text-xs font-black shadow-sm transition-colors cursor-pointer"
+                  >
+                    <UserPlus className="w-3.5 h-3.5" />
+                    <span>Sign Up</span>
+                  </button>
+                </div>
               </div>
             ) : (
-              <div className="pt-2 border-t border-emerald-800 flex gap-2">
+              <div className="pt-2 border-t border-emerald-800 grid grid-cols-2 gap-2">
                 <button
                   onClick={() => {
                     onOpenAuth('login');
                     setMobileMenuOpen(false);
                   }}
-                  className="flex-1 py-2 rounded-xl bg-emerald-800 text-white font-medium text-sm text-center"
+                  className="py-2.5 rounded-xl bg-emerald-800 text-white font-bold text-sm text-center flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  {t.login}
+                  <LogIn className="w-4 h-4" />
+                  <span>{t.login}</span>
                 </button>
                 <button
                   onClick={() => {
                     onOpenAuth('signup');
                     setMobileMenuOpen(false);
                   }}
-                  className="flex-1 py-2 rounded-xl bg-emerald-400 text-emerald-950 font-bold text-sm text-center"
+                  className="py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-stone-950 font-black text-sm text-center flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
                 >
-                  {t.signup}
+                  <UserPlus className="w-4 h-4" />
+                  <span>{t.signup}</span>
                 </button>
               </div>
             )}

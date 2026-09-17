@@ -29,11 +29,23 @@ const initialUser: FarmerProfile = {
   joinedDate: '2026-01-15'
 };
 
+const getStoredActiveUser = (): FarmerProfile | null => {
+  try {
+    const saved = localStorage.getItem('farmease_user');
+    if (saved) {
+      return JSON.parse(saved);
+    }
+  } catch (e) {
+    console.error('Failed to load user from localStorage', e);
+  }
+  return initialUser;
+};
+
 export default function App() {
   const [currentTab, setCurrentTab] = useState<string>('home');
   const [language, setLanguage] = useState<Language>('en');
   const [isLargeText, setIsLargeText] = useState<boolean>(false);
-  const [user, setUser] = useState<FarmerProfile | null>(initialUser);
+  const [user, setUser] = useState<FarmerProfile | null>(getStoredActiveUser);
   const [weather, setWeather] = useState<WeatherData | null>(null);
 
   // Auth Modal state
@@ -101,9 +113,43 @@ export default function App() {
       .catch(err => console.error(err));
   }, [user?.location]);
 
+  // Synchronize URL hash for direct links (#signup, #login, etc.) on GitHub Pages
+  useEffect(() => {
+    const syncFromHash = () => {
+      const hash = window.location.hash.replace(/^#\/?/, '').toLowerCase();
+      if (hash === 'signup' || hash === 'register') {
+        setAuthMode('signup');
+        setCurrentTab('login');
+      } else if (hash === 'login' || hash === 'signin') {
+        setAuthMode('login');
+        setCurrentTab('login');
+      } else if (['home', 'dashboard', 'crop-recommendation', 'disease-detection', 'weather', 'insights', 'profile'].includes(hash)) {
+        setCurrentTab(hash);
+      }
+    };
+
+    syncFromHash();
+    window.addEventListener('hashchange', syncFromHash);
+    return () => window.removeEventListener('hashchange', syncFromHash);
+  }, []);
+
+  const handleUserChange = (newUser: FarmerProfile | null) => {
+    setUser(newUser);
+    try {
+      if (newUser) {
+        localStorage.setItem('farmease_user', JSON.stringify(newUser));
+      } else {
+        localStorage.removeItem('farmease_user');
+      }
+    } catch (e) {
+      console.error('Failed to sync user with localStorage', e);
+    }
+  };
+
   const handleOpenAuth = (mode: 'login' | 'signup') => {
     setAuthMode(mode);
     setCurrentTab('login');
+    window.location.hash = mode;
   };
 
   const handleSaveRecommendation = (rec: CropRecommendation) => {
@@ -121,7 +167,10 @@ export default function App() {
       {/* Navigation Header */}
       <Navbar
         currentTab={currentTab}
-        setCurrentTab={setCurrentTab}
+        setCurrentTab={(tab) => {
+          setCurrentTab(tab);
+          window.location.hash = tab;
+        }}
         language={language}
         setLanguage={setLanguage}
         isLargeText={isLargeText}
@@ -129,8 +178,10 @@ export default function App() {
         user={user}
         onOpenAuth={handleOpenAuth}
         onLogout={() => {
-          setUser(null);
+          handleUserChange(null);
           setCurrentTab('login');
+          setAuthMode('login');
+          window.location.hash = 'login';
         }}
         alerts={alerts}
       />
@@ -140,12 +191,19 @@ export default function App() {
         {currentTab === 'home' && (
           <div className="space-y-12">
             <HeroSection
-              onGetStarted={() => setCurrentTab('dashboard')}
+              onGetStarted={() => {
+                setCurrentTab('dashboard');
+                window.location.hash = 'dashboard';
+              }}
               onExploreFeatures={() => {
                 const el = document.getElementById('features-section');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
-                else setCurrentTab('dashboard');
+                else {
+                  setCurrentTab('dashboard');
+                  window.location.hash = 'dashboard';
+                }
               }}
+              onOpenAuth={handleOpenAuth}
               language={language}
             />
             <div id="features-section">
@@ -204,8 +262,13 @@ export default function App() {
         {currentTab === 'profile' && user && (
           <ProfileView
             user={user}
-            onUpdateUser={(updated) => setUser(updated)}
-            onLogout={() => { setUser(null); setCurrentTab('login'); }}
+            onUpdateUser={(updated) => handleUserChange(updated)}
+            onLogout={() => {
+              handleUserChange(null);
+              setCurrentTab('login');
+              setAuthMode('login');
+              window.location.hash = 'login';
+            }}
             language={language}
             setLanguage={setLanguage}
           />
@@ -215,10 +278,14 @@ export default function App() {
           <LoginPage
             currentUser={null}
             onLoginSuccess={(newUser) => {
-              setUser(newUser);
+              handleUserChange(newUser);
               setCurrentTab('dashboard');
+              window.location.hash = 'dashboard';
             }}
-            onNavigate={(tabId) => setCurrentTab(tabId)}
+            onNavigate={(tabId) => {
+              setCurrentTab(tabId);
+              window.location.hash = tabId;
+            }}
             language={language}
             setLanguage={setLanguage}
             initialMode="otp"
@@ -229,10 +296,14 @@ export default function App() {
           <LoginPage
             currentUser={user}
             onLoginSuccess={(newUser) => {
-              setUser(newUser);
+              handleUserChange(newUser);
               setCurrentTab('dashboard');
+              window.location.hash = 'dashboard';
             }}
-            onNavigate={(tabId) => setCurrentTab(tabId)}
+            onNavigate={(tabId) => {
+              setCurrentTab(tabId);
+              window.location.hash = tabId;
+            }}
             language={language}
             setLanguage={setLanguage}
             initialMode={authMode === 'signup' ? 'signup' : 'otp'}

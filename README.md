@@ -32,7 +32,20 @@ To test the application or evaluate the farmer experience, use the pre-configure
 
 New farmers can register directly via the **"New Registration"** tab in the Login Portal:
 - **Required fields**: Full Name, Mobile Number, Location/District, Plot Size (Acres), Soil Type, and Primary Crops.
-- After submitting, the account is created and loaded into the active session with customized regional soil metrics.
+- After submitting, the account is created and stored with custom regional soil metrics.
+- **Client Persistence**: Newly registered accounts are persisted locally so they remain accessible across page refreshes and browser sessions.
+
+---
+
+### 4. Direct URLs & Deep Linking on GitHub Pages
+
+When deployed to GitHub Pages or static hosting, you can jump directly to any view using URL hashes:
+- **Sign Up Page**: `https://<username>.github.io/<repo>/#signup`
+- **Login Portal**: `https://<username>.github.io/<repo>/#login`
+- **Farm Dashboard**: `https://<username>.github.io/<repo>/#dashboard`
+- **Crop Recommendations**: `https://<username>.github.io/<repo>/#crop-recommendation`
+- **Disease Detection Doctor**: `https://<username>.github.io/<repo>/#disease-detection`
+- **Weather Advisory**: `https://<username>.github.io/<repo>/#weather`
 
 ---
 

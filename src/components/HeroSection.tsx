@@ -6,12 +6,14 @@ import { translations } from '../lib/translations';
 interface HeroSectionProps {
   onGetStarted: () => void;
   onExploreFeatures: () => void;
+  onOpenAuth?: (mode: 'login' | 'signup') => void;
   language: Language;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   onGetStarted,
   onExploreFeatures,
+  onOpenAuth,
   language
 }) => {
   const t = translations[language] || translations.en;
@@ -43,7 +45,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </p>
 
             {/* CTA Buttons */}
-            <div className="pt-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+            <div className="pt-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 flex-wrap">
               <button
                 onClick={onGetStarted}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-400 to-green-500 text-emerald-950 font-extrabold text-lg shadow-xl hover:shadow-emerald-500/25 transform hover:-translate-y-0.5 transition-all cursor-pointer"
@@ -52,9 +54,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 <ArrowRight className="w-5 h-5 text-emerald-950" />
               </button>
 
+              {onOpenAuth && (
+                <button
+                  onClick={() => onOpenAuth('signup')}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl bg-amber-400 hover:bg-amber-300 text-stone-950 font-black text-base shadow-lg hover:shadow-amber-400/25 transform hover:-translate-y-0.5 transition-all cursor-pointer"
+                >
+                  <Sparkles className="w-4 h-4 text-stone-900" />
+                  <span>Farmer Sign Up / Login</span>
+                </button>
+              )}
+
               <button
                 onClick={onExploreFeatures}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl bg-emerald-800/80 hover:bg-emerald-800 text-emerald-100 font-semibold text-base border border-emerald-600/60 shadow-md transition-all cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-emerald-800/80 hover:bg-emerald-800 text-emerald-100 font-semibold text-base border border-emerald-600/60 shadow-md transition-all cursor-pointer"
               >
                 <span>{t.exploreFeatures}</span>
               </button>

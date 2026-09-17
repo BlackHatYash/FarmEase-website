@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Sprout, 
   Phone, 
@@ -17,7 +17,8 @@ import {
   AlertCircle,
   KeyRound,
   RotateCcw,
-  Leaf
+  Leaf,
+  UserPlus
 } from 'lucide-react';
 import { FarmerProfile, Language } from '../types';
 import { translations, languageNames } from '../lib/translations';
@@ -30,6 +31,16 @@ interface LoginPageProps {
   setLanguage: (lang: Language) => void;
   initialMode?: 'otp' | 'password' | 'signup';
 }
+
+export const getStoredRegisteredFarmers = (): FarmerProfile[] => {
+  try {
+    const saved = localStorage.getItem('farmease_registered_farmers');
+    return saved ? JSON.parse(saved) : [];
+  } catch (e) {
+    console.error('Failed to read registered farmers from storage', e);
+    return [];
+  }
+};
 
 const DEMO_PROFILES: FarmerProfile[] = [
   {
@@ -85,6 +96,18 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
   // Active form view mode: 'otp' | 'password' | 'signup' | 'forgot'
   const [authMode, setAuthMode] = useState<'otp' | 'password' | 'signup' | 'forgot'>(initialMode);
+
+  // Synchronize when parent triggers a specific initialMode (e.g. clicking Sign Up)
+  useEffect(() => {
+    if (initialMode) {
+      setAuthMode(initialMode);
+    }
+  }, [initialMode]);
+
+  // Helper to fetch all known accounts (demo + registered)
+  const getAllFarmerProfiles = (): FarmerProfile[] => {
+    return [...getStoredRegisteredFarmers(), ...DEMO_PROFILES];
+  };
 
   // OTP Login State
   const [otpPhone, setOtpPhone] = useState('+91 98765 43210');
@@ -142,8 +165,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
     setTimeout(() => {
       setIsLoading(false);
-      // Find matching demo profile or create dynamic profile
-      const matched = DEMO_PROFILES.find(p => p.phone.replace(/\s+/g, '') === otpPhone.replace(/\s+/g, ''));
+      // Find matching demo profile or registered profile or create dynamic profile
+      const allProfiles = getAllFarmerProfiles();
+      const matched = allProfiles.find(
+        p => p.phone.replace(/\s+/g, '') === otpPhone.replace(/\s+/g, '')
+      );
       const authenticatedUser: FarmerProfile = matched || {
         id: 'farmer_' + Date.now(),
         name: 'Farmer ' + otpPhone.slice(-4),
@@ -176,7 +202,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({
     setTimeout(() => {
       setIsLoading(false);
       const cleanIdent = identifier.trim().toLowerCase();
-      const matched = DEMO_PROFILES.find(
+      const allProfiles = getAllFarmerProfiles();
+      const matched = allProfiles.find(
         p => p.email.toLowerCase() === cleanIdent || p.phone.replace(/\s+/g, '') === cleanIdent.replace(/\s+/g, '')
       );
 
@@ -233,6 +260,15 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         language,
         joinedDate: new Date().toISOString().split('T')[0]
       };
+
+      // Persist locally so it survives page reloads and publishes
+      try {
+        const stored = getStoredRegisteredFarmers();
+        const updated = [newFarmer, ...stored.filter(p => p.phone !== newFarmer.phone && p.email !== newFarmer.email)];
+        localStorage.setItem('farmease_registered_farmers', JSON.stringify(updated));
+      } catch (err) {
+        console.error('Failed to save farmer to storage', err);
+      }
 
       onLoginSuccess(newFarmer);
       onNavigate('dashboard');
