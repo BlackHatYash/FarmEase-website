@@ -1,1 +1,50 @@
 @import "tailwindcss";
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide non-printable elements like site navigation, footers, control bars, modals, floating action bars */
+  .no-print, header, nav, footer, button, .modal-backdrop {
+    display: none !important;
+  }
+
+  body {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    font-family: 'Times New Roman', Times, Georgia, serif !important;
+    font-size: 11pt !important;
+    line-height: 1.6 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Print page geometry */
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
+
+  /* Reset layout constraints on print */
+  .max-w-6xl {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Keep tables, code blocks, and cards from breaking awkwardly */
+  table, tr, td, th, pre {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* High-contrast crisp borders for laser printing */
+  table, th, td {
+    border-color: #4b5563 !important;
+  }
+}
+

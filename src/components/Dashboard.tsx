@@ -40,9 +40,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-800/80 text-emerald-200 text-xs font-bold border border-emerald-700">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              Location: {user?.location || weather?.location || 'Punjab, India'} ({user?.farmSize || 5} {user?.farmSizeUnit || 'acres'})
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-800/80 text-emerald-200 text-xs font-bold border border-emerald-700">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                Location: {user?.location || weather?.location || 'Punjab, India'} ({user?.farmSize || 5} {user?.farmSizeUnit || 'acres'})
+              </div>
+              <button
+                onClick={() => onNavigate('login')}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-700/60 hover:bg-emerald-600 text-emerald-100 hover:text-white text-xs font-bold border border-emerald-600/70 transition-colors cursor-pointer"
+                title="Switch Farmer Profile or Open Login Portal"
+              >
+                <span>{user ? 'Switch Profile' : 'Log In'}</span>
+              </button>
             </div>
 
             <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white flex items-center gap-2">

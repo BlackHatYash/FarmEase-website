@@ -10,6 +10,7 @@ import { DiseaseDetectionView } from './components/DiseaseDetectionView';
 import { WeatherView } from './components/WeatherView';
 import { FarmInsightsView } from './components/FarmInsightsView';
 import { ProfileView } from './components/ProfileView';
+import { LoginPage } from './components/LoginPage';
 import { AuthModal } from './components/AuthModal';
 import { fetchWeatherData } from './services/api';
 
@@ -102,7 +103,7 @@ export default function App() {
 
   const handleOpenAuth = (mode: 'login' | 'signup') => {
     setAuthMode(mode);
-    setAuthModalOpen(true);
+    setCurrentTab('login');
   };
 
   const handleSaveRecommendation = (rec: CropRecommendation) => {
@@ -127,7 +128,10 @@ export default function App() {
         setIsLargeText={setIsLargeText}
         user={user}
         onOpenAuth={handleOpenAuth}
-        onLogout={() => setUser(null)}
+        onLogout={() => {
+          setUser(null);
+          setCurrentTab('login');
+        }}
         alerts={alerts}
       />
 
@@ -201,18 +205,53 @@ export default function App() {
           <ProfileView
             user={user}
             onUpdateUser={(updated) => setUser(updated)}
-            onLogout={() => { setUser(null); setCurrentTab('home'); }}
+            onLogout={() => { setUser(null); setCurrentTab('login'); }}
             language={language}
             setLanguage={setLanguage}
+          />
+        )}
+
+        {currentTab === 'profile' && !user && (
+          <LoginPage
+            currentUser={null}
+            onLoginSuccess={(newUser) => {
+              setUser(newUser);
+              setCurrentTab('dashboard');
+            }}
+            onNavigate={(tabId) => setCurrentTab(tabId)}
+            language={language}
+            setLanguage={setLanguage}
+            initialMode="otp"
+          />
+        )}
+
+        {currentTab === 'login' && (
+          <LoginPage
+            currentUser={user}
+            onLoginSuccess={(newUser) => {
+              setUser(newUser);
+              setCurrentTab('dashboard');
+            }}
+            onNavigate={(tabId) => setCurrentTab(tabId)}
+            language={language}
+            setLanguage={setLanguage}
+            initialMode={authMode === 'signup' ? 'signup' : 'otp'}
           />
         )}
       </main>
 
       {/* Footer */}
-      <footer className="bg-emerald-950 text-emerald-200 border-t border-emerald-800/80 py-10 mt-12 mb-12 lg:mb-0">
+      <footer className="no-print bg-emerald-950 text-emerald-200 border-t border-emerald-800/80 py-10 mt-12 mb-12 lg:mb-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-          <div className="flex items-center gap-2 font-extrabold text-white text-sm">
+          <div className="flex flex-wrap items-center gap-3 font-extrabold text-white text-sm">
             <span>🌱 FarmEase Digital Assistant</span>
+            <span className="text-emerald-500">•</span>
+            <button
+              onClick={() => setCurrentTab('login')}
+              className="text-emerald-300 hover:text-white underline font-bold transition-colors cursor-pointer"
+            >
+              🔐 Farmer Login Portal
+            </button>
           </div>
           <p className="text-emerald-300/80 text-center sm:text-right">
             Empowering farmers with AI crop recommendations, plant pathology diagnostics, and weather intelligence.

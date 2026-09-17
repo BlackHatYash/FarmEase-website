@@ -169,10 +169,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
               {/* User Profile / Auth */}
               {user ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2">
                   <button
                     onClick={() => setCurrentTab('profile')}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-800 hover:bg-emerald-700 text-white transition-colors"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-800 hover:bg-emerald-700 text-white transition-colors cursor-pointer"
+                    title="Farmer Profile & Farm Settings"
                   >
                     <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs border border-emerald-400">
                       {user.name.charAt(0).toUpperCase()}
@@ -181,18 +182,35 @@ export const Navbar: React.FC<NavbarProps> = ({
                       {user.name}
                     </span>
                   </button>
+                  <button
+                    onClick={() => onOpenAuth('login')}
+                    className={`hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                      currentTab === 'login'
+                        ? 'bg-emerald-700 text-white border border-emerald-500'
+                        : 'text-emerald-200 hover:text-white hover:bg-emerald-800/80 border border-emerald-700/60'
+                    }`}
+                    title="Switch Account / Login Portal"
+                  >
+                    <LogIn className="w-3.5 h-3.5" />
+                    <span>Switch</span>
+                  </button>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => onOpenAuth('login')}
-                    className="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-emerald-800 hover:bg-emerald-700 text-white transition-colors"
+                    className={`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer ${
+                      currentTab === 'login'
+                        ? 'bg-amber-400 text-stone-950 font-black shadow-md ring-2 ring-amber-300'
+                        : 'bg-emerald-800 hover:bg-emerald-700 text-white'
+                    }`}
                   >
-                    {t.login}
+                    <LogIn className="w-3.5 h-3.5" />
+                    <span>{t.login}</span>
                   </button>
                   <button
                     onClick={() => onOpenAuth('signup')}
-                    className="hidden sm:inline-flex px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-emerald-400 hover:bg-emerald-300 text-emerald-950 transition-colors shadow-sm"
+                    className="hidden sm:inline-flex px-3.5 py-1.5 text-xs font-bold rounded-lg bg-emerald-400 hover:bg-emerald-300 text-emerald-950 transition-colors shadow-sm cursor-pointer"
                   >
                     {t.signup}
                   </button>
@@ -234,23 +252,36 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               );
             })}
+
             {user ? (
-              <div className="pt-2 border-t border-emerald-800/80 flex items-center justify-between">
+              <div className="pt-2 border-t border-emerald-800/80 space-y-2">
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={() => {
+                      setCurrentTab('profile');
+                      setMobileMenuOpen(false);
+                    }}
+                    className="flex items-center gap-2 text-emerald-200 text-sm font-medium"
+                  >
+                    <User className="w-4 h-4 text-emerald-400" />
+                    <span>{user.name} ({user.location})</span>
+                  </button>
+                  <button
+                    onClick={onLogout}
+                    className="text-xs text-red-300 hover:text-red-200 bg-red-950/60 px-3 py-1 rounded-lg border border-red-800/60"
+                  >
+                    {t.logout}
+                  </button>
+                </div>
                 <button
                   onClick={() => {
-                    setCurrentTab('profile');
+                    onOpenAuth('login');
                     setMobileMenuOpen(false);
                   }}
-                  className="flex items-center gap-2 text-emerald-200 text-sm font-medium"
+                  className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-emerald-800/60 hover:bg-emerald-800 text-emerald-200 hover:text-white text-xs font-semibold border border-emerald-700/60 transition-colors"
                 >
-                  <User className="w-4 h-4 text-emerald-400" />
-                  <span>{user.name} ({user.location})</span>
-                </button>
-                <button
-                  onClick={onLogout}
-                  className="text-xs text-red-300 hover:text-red-200 bg-red-950/60 px-3 py-1 rounded-lg border border-red-800/60"
-                >
-                  {t.logout}
+                  <LogIn className="w-3.5 h-3.5" />
+                  <span>Switch Farmer Account / Login Portal</span>
                 </button>
               </div>
             ) : (
