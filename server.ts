@@ -40,28 +40,28 @@ app.post('/api/crop-recommendation', async (req, res) => {
 
   if (aiClient) {
     try {
-      const prompt = `You are an expert agronomist providing a precision agricultural crop recommendation.
-Farmer parameters:
+      const prompt = `You are a helpful farming advisor speaking directly to a farmer in simple, everyday language (no complex technical jargon).
+Farm details:
 - Location: ${location || 'Punjab, India'}
 - Soil Type: ${soilType || 'Loamy'}
 - Soil pH: ${soilPh || 6.5}
 - Water Availability: ${waterAvailability || 'Medium'}
 - Avg Temperature: ${temperature || 28}°C
 - Season: ${season || 'Kharif'}
-- Farm Size: ${farmSize || 2} acres/hectares
+- Farm Size: ${farmSize || 2} acres
 - Previous Crop: ${previousCrop || 'Wheat'}
 
 Return a JSON object with:
-- cropName (string)
+- cropName (string, clear common crop name)
 - suitabilityScore (number 70-98)
-- expectedYield (string, e.g. "4.5 tons/hectare")
+- expectedYield (string, e.g. "4.5 tons / hectare")
 - growingDuration (string, e.g. "120-140 days")
 - waterRequirement ("Low" | "Medium" | "High" | "Very High")
-- estimatedProfitability (string, e.g. "High ($1,800/hectare)")
+- estimatedProfitability (string, e.g. "High ($1,800 / hectare)")
 - recommendedPlantingPeriod (string, e.g. "June - July")
-- soilCompatibility (string explanation)
-- aiExplanation (detailed 2-3 sentence reason for choosing this crop for these specific soil/climate conditions)
-- keyCareTips (array of 3 practical tips)
+- soilCompatibility (1 short plain sentence explaining why this soil works well)
+- aiExplanation (2 short, friendly sentences explaining in simple words why this crop is a good choice for this land, water, and season)
+- keyCareTips (array of 3 simple, step-by-step practical tips a farmer can follow right away)
 `;
 
       const response = await aiClient.models.generateContent({
@@ -110,12 +110,12 @@ Return a JSON object with:
 
   // Fallback smart algorithmic response when AI client is unconfigured/fails
   const mockCropsBySoil: Record<string, any> = {
-    alluvial: { cropName: 'Rice (Paddy) / Basmati', suitabilityScore: 94, expectedYield: '4.8 tons/hectare', growingDuration: '120–140 days', waterReq: 'High', profit: '$2,100 / hectare', period: 'June – July' },
-    black: { cropName: 'Cotton & Soybean', suitabilityScore: 91, expectedYield: '2.5 tons/hectare', growingDuration: '150–180 days', waterReq: 'Medium', profit: '$1,950 / hectare', period: 'June – August' },
-    red: { cropName: 'Groundnut & Pulses', suitabilityScore: 89, expectedYield: '2.2 tons/hectare', growingDuration: '105–120 days', waterReq: 'Medium', profit: '$1,600 / hectare', period: 'May – July' },
-    clay: { cropName: 'Wheat / Paddy', suitabilityScore: 92, expectedYield: '4.2 tons/hectare', growingDuration: '130–150 days', waterReq: 'Medium', profit: '$1,750 / hectare', period: 'October – November' },
-    sandy: { cropName: 'Millets (Bajra) & Sesame', suitabilityScore: 88, expectedYield: '1.8 tons/hectare', growingDuration: '80–90 days', waterReq: 'Low', profit: '$1,200 / hectare', period: 'July – August' },
-    loamy: { cropName: 'Maize (Corn) & Sugarcane', suitabilityScore: 95, expectedYield: '6.5 tons/hectare', growingDuration: '100–110 days', waterReq: 'Medium', profit: '$2,300 / hectare', period: 'June – July' }
+    alluvial: { cropName: 'Basmati Rice (Paddy)', suitabilityScore: 94, expectedYield: '4.8 tons / hectare', growingDuration: '120–140 days', waterReq: 'High', profit: '$2,100 / hectare', period: 'June – July' },
+    black: { cropName: 'Cotton & Soybean', suitabilityScore: 91, expectedYield: '2.5 tons / hectare', growingDuration: '150–180 days', waterReq: 'Medium', profit: '$1,950 / hectare', period: 'June – August' },
+    red: { cropName: 'Groundnut & Pulses (Tur Dal)', suitabilityScore: 89, expectedYield: '2.2 tons / hectare', growingDuration: '105–120 days', waterReq: 'Medium', profit: '$1,600 / hectare', period: 'May – July' },
+    clay: { cropName: 'Wheat & Mustard', suitabilityScore: 92, expectedYield: '4.2 tons / hectare', growingDuration: '130–150 days', waterReq: 'Medium', profit: '$1,750 / hectare', period: 'October – November' },
+    sandy: { cropName: 'Pearl Millet (Bajra) & Sesame', suitabilityScore: 88, expectedYield: '1.8 tons / hectare', growingDuration: '80–90 days', waterReq: 'Low', profit: '$1,200 / hectare', period: 'July – August' },
+    loamy: { cropName: 'Maize (Corn) & Green Gram', suitabilityScore: 95, expectedYield: '6.5 tons / hectare', growingDuration: '100–110 days', waterReq: 'Medium', profit: '$2,300 / hectare', period: 'June – July' }
   };
 
   const soilKey = (soilType || 'loamy').toLowerCase();
@@ -135,12 +135,12 @@ Return a JSON object with:
       waterRequirement: selected.waterReq,
       estimatedProfitability: selected.profit,
       recommendedPlantingPeriod: selected.period,
-      soilCompatibility: `Selected crop thrives in ${soilType || 'Loamy'} soil with pH ${soilPh || 6.5}. Excellent nutrient retention.`,
-      aiExplanation: `Based on your location (${location || 'Regional Zone'}), ${soilType || 'Loamy'} soil (pH ${soilPh || 6.5}) and ${waterAvailability || 'medium'} water supply, ${selected.cropName} provides optimal nitrogen balance following ${previousCrop || 'the previous crop cycle'}.`,
+      soilCompatibility: `Your ${soilType || 'Loamy'} soil holds nutrients well and matches this crop naturally.`,
+      aiExplanation: `For ${location || 'your area'}, ${selected.cropName} is a strong match for ${soilType || 'Loamy'} soil and ${waterAvailability || 'medium'} water. Growing this after ${previousCrop || 'your last crop'} also helps keep your soil fertile.`,
       keyCareTips: [
-        `Maintain optimal field moisture during early tillering stage.`,
-        `Apply balanced N-P-K (120:60:40) based on target yield.`,
-        `Monitor regularly for stem borer and rust symptoms.`
+        `Prepare the field well and sow seeds during ${selected.period} for strong early growth.`,
+        `Water gently during flowering and grain filling, and avoid waterlogging the roots.`,
+        `Check leaves once a week for early signs of pests or yellowing so you can treat them early.`
       ],
       createdAt: new Date().toISOString()
     }

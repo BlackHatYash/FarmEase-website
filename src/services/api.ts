@@ -12,23 +12,35 @@ export async function fetchCropRecommendation(input: CropInput): Promise<{ isLiv
     return { isLiveAi: json.isLiveAi ?? false, data: json.data };
   } catch (error) {
     console.warn('API error, using local fallback recommendation:', error);
+    const soilKey = (input.soilType || 'loamy').toLowerCase();
+    const fallbackBySoil: Record<string, { cropName: string; score: number; yield: string; duration: string; water: 'Low' | 'Medium' | 'High'; profit: string; period: string }> = {
+      alluvial: { cropName: 'Basmati Rice (Paddy)', score: 94, yield: '4.8 tons / hectare', duration: '120–140 days', water: 'High', profit: '$2,100 / hectare', period: 'June – July' },
+      black: { cropName: 'Cotton & Soybean', score: 91, yield: '2.5 tons / hectare', duration: '150–180 days', water: 'Medium', profit: '$1,950 / hectare', period: 'June – August' },
+      red: { cropName: 'Groundnut & Pulses (Tur Dal)', score: 89, yield: '2.2 tons / hectare', duration: '105–120 days', water: 'Medium', profit: '$1,600 / hectare', period: 'May – July' },
+      clay: { cropName: 'Wheat & Mustard', score: 92, yield: '4.2 tons / hectare', duration: '130–150 days', water: 'Medium', profit: '$1,750 / hectare', period: 'October – November' },
+      sandy: { cropName: 'Pearl Millet (Bajra) & Sesame', score: 88, yield: '1.8 tons / hectare', duration: '80–90 days', water: 'Low', profit: '$1,200 / hectare', period: 'July – August' },
+      loamy: { cropName: 'Maize (Corn) & Green Gram', score: 95, yield: '6.5 tons / hectare', duration: '100–110 days', water: 'Medium', profit: '$2,300 / hectare', period: 'June – July' }
+    };
+    const matchedKey = Object.keys(fallbackBySoil).find(k => soilKey.includes(k)) || 'loamy';
+    const picked = fallbackBySoil[matchedKey];
+
     return {
       isLiveAi: false,
       data: {
         id: 'rec_fallback_' + Date.now(),
-        cropName: 'Organic Basmati Rice & Legumes',
-        suitabilityScore: 92,
-        expectedYield: '4.5 tons/hectare',
-        growingDuration: '120–150 days',
-        waterRequirement: 'High',
-        estimatedProfitability: '$1,900 / hectare',
-        recommendedPlantingPeriod: 'June – July (Monsoon Onset)',
-        soilCompatibility: `High soil organic matter retention in ${input.soilType || 'Loamy'} soil (pH ${input.soilPh || 6.5}).`,
-        aiExplanation: `Your location (${input.location || 'Regional Zone'}) with ${input.soilType || 'Loamy'} soil (pH ${input.soilPh || 6.5}) and ${input.waterAvailability || 'medium'} water supply provides ideal conditions for Basmati Rice, maximizing nitrogen output after ${input.previousCrop || 'previous crop'}.`,
+        cropName: picked.cropName,
+        suitabilityScore: picked.score,
+        expectedYield: picked.yield,
+        growingDuration: picked.duration,
+        waterRequirement: picked.water,
+        estimatedProfitability: picked.profit,
+        recommendedPlantingPeriod: picked.period,
+        soilCompatibility: `Your ${input.soilType || 'Loamy'} soil works very well for ${picked.cropName}.`,
+        aiExplanation: `For ${input.location || 'your farm'}, ${picked.cropName} grows reliably in ${input.soilType || 'Loamy'} soil with ${input.waterAvailability || 'medium'} water. Sowing this after ${input.previousCrop || 'your last crop'} also helps keep the soil healthy.`,
         keyCareTips: [
-          'Maintain 2-3 cm water depth during seedling establishment.',
-          'Apply neem-coated urea at 30 and 60 days after transplanting.',
-          'Monitor field borders for stem borer signs.'
+          `Prepare the soil smoothly and sow seeds during ${picked.period} for strong sprouting.`,
+          `Water evenly during flowering and grain growth, and drain extra rainwater quickly.`,
+          `Walk your field once a week to spot pests or leaf spots early.`
         ],
         createdAt: new Date().toISOString()
       }
