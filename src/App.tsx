@@ -123,8 +123,8 @@ export default function App() {
       } else if (hash === 'login' || hash === 'signin') {
         setAuthMode('login');
         setCurrentTab('login');
-      } else if (['home', 'dashboard', 'crop-recommendation', 'disease-detection', 'weather', 'insights', 'profile'].includes(hash)) {
-        setCurrentTab(hash);
+      } else if (['home', 'dashboard', 'crop-recommendation', 'disease-detection', 'weather', 'farm-insights', 'insights', 'profile'].includes(hash)) {
+        setCurrentTab(hash === 'insights' ? 'farm-insights' : hash);
       }
     };
 
@@ -318,7 +318,10 @@ export default function App() {
             <span>🌱 FarmEase Digital Assistant</span>
             <span className="text-emerald-500">•</span>
             <button
-              onClick={() => setCurrentTab('login')}
+              onClick={() => {
+                setCurrentTab('login');
+                window.location.hash = 'login';
+              }}
               className="text-emerald-300 hover:text-white underline font-bold transition-colors cursor-pointer"
             >
               🔐 Farmer Login Portal
