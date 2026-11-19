@@ -13,6 +13,7 @@ import { ProfileView } from './components/ProfileView';
 import { LoginPage } from './components/LoginPage';
 import { AuthModal } from './components/AuthModal';
 import { fetchWeatherData } from './services/api';
+import tomatoBlightImg from './assets/images/tomato_blight_leaf_1795064405537.jpg';
 
 // Pre-seeded initial user profile so the dashboard is immediately interactive
 const initialUser: FarmerProfile = {
@@ -76,7 +77,7 @@ export default function App() {
   const [diseaseScans, setDiseaseScans] = useState<DiseaseScan[]>([
     {
       id: 'scan_init_1',
-      imageUrl: 'https://images.unsplash.com/photo-1592417817098-8f3d6ef23a81?w=500&auto=format&fit=crop&q=80',
+      imageUrl: tomatoBlightImg,
       cropName: 'Tomato',
       diseaseName: 'Tomato Early Blight (Alternaria solani)',
       confidence: 94,

@@ -4,6 +4,7 @@ import { DiseaseScan, Language } from '../types';
 import { translations } from '../lib/translations';
 import { detectPlantDisease } from '../services/api';
 import { VoiceAssistant } from './VoiceAssistant';
+import tomatoBlightImg from '../assets/images/tomato_blight_leaf_1795064405537.jpg';
 
 interface DiseaseDetectionViewProps {
   onSaveScan: (scan: DiseaseScan) => void;
@@ -114,7 +115,7 @@ export const DiseaseDetectionView: React.FC<DiseaseDetectionViewProps> = ({
     {
       name: 'Tomato Blight Sample',
       crop: 'Tomato',
-      url: 'https://images.unsplash.com/photo-1592417817098-8f3d6ef23a81?w=500&auto=format&fit=crop&q=80'
+      url: tomatoBlightImg
     },
     {
       name: 'Corn Rust Sample',
@@ -128,9 +129,27 @@ export const DiseaseDetectionView: React.FC<DiseaseDetectionViewProps> = ({
     }
   ];
 
-  const handleSampleClick = (url: string, cropName: string) => {
+  const handleSampleClick = async (url: string, cropName: string) => {
     setCropHint(cropName);
     setImagePreview(url);
+
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        const blob = await response.blob();
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+        await triggerAnalysis(dataUrl);
+        return;
+      }
+    } catch {
+      // Fall back to direct URL if fetch/blob conversion fails
+    }
+
     triggerAnalysis(url);
   };
 
@@ -221,6 +240,7 @@ export const DiseaseDetectionView: React.FC<DiseaseDetectionViewProps> = ({
                   <img
                     src={imagePreview}
                     alt="Preview"
+                    referrerPolicy="no-referrer"
                     className="max-h-44 rounded-xl mx-auto border border-stone-300 shadow-sm object-cover"
                   />
                   <span className="text-xs font-extrabold text-amber-800 bg-amber-100 px-3 py-1 rounded-full inline-block">
@@ -266,7 +286,7 @@ export const DiseaseDetectionView: React.FC<DiseaseDetectionViewProps> = ({
                   onClick={() => handleSampleClick(sample.url, sample.crop)}
                   className="group rounded-xl overflow-hidden border border-stone-200 hover:border-amber-500 p-1 bg-stone-50 text-left transition-all cursor-pointer"
                 >
-                  <img src={sample.url} alt={sample.name} className="w-full h-12 object-cover rounded-lg" />
+                  <img src={sample.url} alt={sample.name} referrerPolicy="no-referrer" className="w-full h-12 object-cover rounded-lg" />
                   <div className="text-[10px] font-extrabold text-stone-800 truncate mt-1">
                     {sample.crop}
                   </div>

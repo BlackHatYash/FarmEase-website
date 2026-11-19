@@ -320,6 +320,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   <img
                     src={scan.imageUrl}
                     alt={scan.diseaseName}
+                    referrerPolicy="no-referrer"
                     className="w-14 h-14 rounded-xl object-cover border border-stone-300 shrink-0"
                   />
                   <div className="flex-1 min-w-0">
