@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { CloudSun, Search, MapPin, Thermometer, Droplet, Wind, CloudRain, Sun, ShieldAlert, Sparkles, AlertCircle } from 'lucide-react';
+import { CloudSun, MapPin, Thermometer, Droplet, Wind, CloudRain, Sparkles } from 'lucide-react';
 import { WeatherData, Language } from '../types';
+import { translations } from '../lib/translations';
 import { fetchWeatherData } from '../services/api';
 import { VoiceAssistant } from './VoiceAssistant';
 
@@ -10,6 +11,7 @@ interface WeatherViewProps {
 }
 
 export const WeatherView: React.FC<WeatherViewProps> = ({ initialWeather, language }) => {
+  const t = translations[language] || translations.en;
   const [weather, setWeather] = useState<WeatherData | null>(initialWeather);
   const [searchQuery, setSearchQuery] = useState<string>(initialWeather?.location || 'Mumbai, Maharashtra');
   const [loading, setLoading] = useState<boolean>(false);
@@ -37,30 +39,30 @@ export const WeatherView: React.FC<WeatherViewProps> = ({ initialWeather, langua
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-800 text-sky-200 text-xs font-bold">
-              <CloudSun className="w-3.5 h-3.5 text-amber-300" /> Real-Time Microclimate Intelligence
+              <CloudSun className="w-3.5 h-3.5 text-amber-300" /> {t.weatherKicker}
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-white">
-              Weather Intelligence & Advisory
+              {t.weatherHeading}
             </h1>
             <p className="text-sky-100 text-xs sm:text-sm">
-              Actionable field guidance based on humidity, soil temperature, and 7-day precipitation forecasts.
+              {t.weatherSub}
             </p>
           </div>
 
           <VoiceAssistant
-            textToRead={`Weather in ${weather.location}: Temperature is ${weather.currentTemp} degrees. Humidity ${weather.humidity} percent. Rain chance ${weather.rainfallProbability} percent. Irrigation advice: ${weather.farmingAdvice.irrigation}`}
+            textToRead={`${weather.location}: ${t.temperatureLabel} ${weather.currentTemp}°C. ${t.humidityLabel} ${weather.humidity}%. ${t.rainProbLabel} ${weather.rainfallProbability}%. ${weather.farmingAdvice.irrigation}`}
             language={language}
           />
         </div>
 
         {/* Location Search Bar */}
         <form onSubmit={handleSearch} className="flex items-center gap-2 max-w-md bg-white/10 p-1.5 rounded-2xl border border-white/20 backdrop-blur-md">
-          <MapPin className="w-5 h-5 text-sky-300 ml-2" />
+          <MapPin className="w-5 h-5 text-sky-300 ml-2 shrink-0" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Enter city or district name..."
+            placeholder={t.searchPlaceholder}
             className="w-full bg-transparent text-white text-xs sm:text-sm placeholder-sky-200 focus:outline-none px-2"
           />
           <button
@@ -68,7 +70,7 @@ export const WeatherView: React.FC<WeatherViewProps> = ({ initialWeather, langua
             disabled={loading}
             className="px-4 py-2 rounded-xl bg-sky-400 hover:bg-sky-300 text-sky-950 font-bold text-xs shadow-md cursor-pointer shrink-0"
           >
-            {loading ? 'Searching...' : 'Search Location'}
+            {loading ? t.searchingBtn : t.searchBtn}
           </button>
         </form>
       </div>
@@ -77,34 +79,34 @@ export const WeatherView: React.FC<WeatherViewProps> = ({ initialWeather, langua
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm space-y-2">
           <div className="text-xs font-bold text-stone-500 flex items-center gap-1.5">
-            <Thermometer className="w-4 h-4 text-amber-600" /> Temperature
+            <Thermometer className="w-4 h-4 text-amber-600" /> {t.temperatureLabel}
           </div>
-          <div className="text-3xl font-black text-stone-900">{weather.currentTemp}°C</div>
-          <div className="text-xs text-stone-500 font-medium">Feels like {weather.feelsLike}°C</div>
+          <div className="text-3xl font-black text-stone-900 tabular-nums">{weather.currentTemp}°C</div>
+          <div className="text-xs text-stone-500 font-medium">{t.feelsLikeLabel} {weather.feelsLike}°C</div>
         </div>
 
         <div className="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm space-y-2">
           <div className="text-xs font-bold text-stone-500 flex items-center gap-1.5">
-            <Droplet className="w-4 h-4 text-sky-600" /> Humidity & Soil
+            <Droplet className="w-4 h-4 text-sky-600" /> {t.humidityLabel}
           </div>
-          <div className="text-3xl font-black text-stone-900">{weather.humidity}%</div>
-          <div className="text-xs text-emerald-700 font-bold">Soil Moisture: {weather.soilMoisture}%</div>
+          <div className="text-3xl font-black text-stone-900 tabular-nums">{weather.humidity}%</div>
+          <div className="text-xs text-emerald-700 font-bold">{t.soilMoistureLabel}: {weather.soilMoisture}%</div>
         </div>
 
         <div className="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm space-y-2">
           <div className="text-xs font-bold text-stone-500 flex items-center gap-1.5">
-            <CloudRain className="w-4 h-4 text-blue-600" /> Rain Probability
+            <CloudRain className="w-4 h-4 text-blue-600" /> {t.rainProbLabel}
           </div>
-          <div className="text-3xl font-black text-stone-900">{weather.rainfallProbability}%</div>
-          <div className="text-xs text-blue-700 font-bold">Scattered Afternoon Rain</div>
+          <div className="text-3xl font-black text-stone-900 tabular-nums">{weather.rainfallProbability}%</div>
+          <div className="text-xs text-blue-700 font-bold">{weather.location}</div>
         </div>
 
         <div className="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm space-y-2">
           <div className="text-xs font-bold text-stone-500 flex items-center gap-1.5">
-            <Wind className="w-4 h-4 text-teal-600" /> Wind Speed & UV
+            <Wind className="w-4 h-4 text-teal-600" /> {t.windUvLabel}
           </div>
-          <div className="text-3xl font-black text-stone-900">{weather.windSpeed} km/h</div>
-          <div className="text-xs text-amber-700 font-bold">UV Index: {weather.uvIndex} (Moderate)</div>
+          <div className="text-3xl font-black text-stone-900 tabular-nums">{weather.windSpeed} km/h</div>
+          <div className="text-xs text-amber-700 font-bold">UV: {weather.uvIndex}</div>
         </div>
       </div>
 
@@ -116,10 +118,10 @@ export const WeatherView: React.FC<WeatherViewProps> = ({ initialWeather, langua
           </div>
           <div>
             <div className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700">
-              AI Actionable Agricultural Guidance
+              {t.farmingAdvisoryLabel}
             </div>
             <h3 className="text-xl font-black text-stone-900">
-              Field Recommendations Derived from Weather Metrics
+              {t.fieldRecTitle}
             </h3>
           </div>
         </div>
@@ -127,7 +129,7 @@ export const WeatherView: React.FC<WeatherViewProps> = ({ initialWeather, langua
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="bg-emerald-50/90 rounded-2xl p-4 border border-emerald-200 space-y-1">
             <div className="text-xs font-extrabold text-emerald-950 flex items-center gap-2">
-              <span>💧 Irrigation Advisory</span>
+              <span>💧 {t.irrigationAdviceLabel}</span>
             </div>
             <p className="text-xs text-emerald-900 leading-relaxed font-medium">
               "{weather.farmingAdvice.irrigation}"
@@ -136,7 +138,7 @@ export const WeatherView: React.FC<WeatherViewProps> = ({ initialWeather, langua
 
           <div className="bg-emerald-50/90 rounded-2xl p-4 border border-emerald-200 space-y-1">
             <div className="text-xs font-extrabold text-emerald-950 flex items-center gap-2">
-              <span>🌿 Spraying & Chemical Conditions</span>
+              <span>🌿 {t.sprayingAdviceLabel}</span>
             </div>
             <p className="text-xs text-emerald-900 leading-relaxed font-medium">
               "{weather.farmingAdvice.spraying}"
@@ -145,7 +147,7 @@ export const WeatherView: React.FC<WeatherViewProps> = ({ initialWeather, langua
 
           <div className="bg-amber-50/90 rounded-2xl p-4 border border-amber-200 space-y-1">
             <div className="text-xs font-extrabold text-amber-950 flex items-center gap-2">
-              <span>🦠 Disease & Pest Risk Level</span>
+              <span>🦠 {t.diseaseRiskLabel}</span>
             </div>
             <p className="text-xs text-amber-900 leading-relaxed font-medium">
               "{weather.farmingAdvice.diseaseRisk}"
@@ -154,7 +156,7 @@ export const WeatherView: React.FC<WeatherViewProps> = ({ initialWeather, langua
 
           <div className="bg-emerald-50/90 rounded-2xl p-4 border border-emerald-200 space-y-1">
             <div className="text-xs font-extrabold text-emerald-950 flex items-center gap-2">
-              <span>🌾 Harvesting & Field Work</span>
+              <span>🌾 {t.harvestAdviceLabel}</span>
             </div>
             <p className="text-xs text-emerald-900 leading-relaxed font-medium">
               "{weather.farmingAdvice.harvesting}"
@@ -166,7 +168,7 @@ export const WeatherView: React.FC<WeatherViewProps> = ({ initialWeather, langua
       {/* Detailed 7-Day Forecast */}
       <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-stone-200 space-y-5">
         <h3 className="text-lg font-black text-stone-900">
-          7-Day Detailed Forecast & Activity Guidance
+          {t.forecast7DayTitle}
         </h3>
 
         <div className="space-y-3">
@@ -182,18 +184,18 @@ export const WeatherView: React.FC<WeatherViewProps> = ({ initialWeather, langua
                     {day.day} <span className="text-xs font-normal text-stone-500">({day.date})</span>
                   </div>
                   <div className="text-xs text-stone-600 font-medium">
-                    {day.condition} • Rain chance: {day.rainfallProbability}% • Humidity: {day.humidity}%
+                    {day.condition} • {t.rainChanceLabel}: {day.rainfallProbability}% • {t.humidityLabel}: {day.humidity}%
                   </div>
                 </div>
               </div>
 
               <div className="flex items-center gap-4 sm:border-l sm:border-stone-200 sm:pl-4">
                 <div className="text-right">
-                  <div className="text-sm font-black text-stone-900">
+                  <div className="text-sm font-black text-stone-900 tabular-nums">
                     {day.tempMax}°C / {day.tempMin}°C
                   </div>
                   <div className="text-[11px] text-emerald-700 font-bold">
-                    Wind: {day.windSpeed} km/h
+                    {t.windSpeedLabel}: {day.windSpeed} km/h
                   </div>
                 </div>
               </div>

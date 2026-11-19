@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart3, TrendingUp, Droplet, ShieldAlert, CheckCircle2, Calendar, Sparkles } from 'lucide-react';
+import { Calendar, Sparkles } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, BarChart, Bar, CartesianGrid, Legend } from 'recharts';
 import { FarmAnalyticsData, Language } from '../types';
+import { translations } from '../lib/translations';
 import { fetchFarmAnalytics } from '../services/api';
 import { VoiceAssistant } from './VoiceAssistant';
 
@@ -10,6 +11,7 @@ interface FarmInsightsViewProps {
 }
 
 export const FarmInsightsView: React.FC<FarmInsightsViewProps> = ({ language }) => {
+  const t = translations[language] || translations.en;
   const [data, setData] = useState<FarmAnalyticsData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -24,7 +26,7 @@ export const FarmInsightsView: React.FC<FarmInsightsViewProps> = ({ language }) 
     return (
       <div className="py-20 text-center space-y-3">
         <div className="w-10 h-10 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto" />
-        <p className="text-xs text-stone-500 font-semibold">Loading farm insights & analytics...</p>
+        <p className="text-xs text-stone-500 font-semibold">{t.insightsHeading}...</p>
       </div>
     );
   }
@@ -36,18 +38,18 @@ export const FarmInsightsView: React.FC<FarmInsightsViewProps> = ({ language }) 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-900 text-emerald-300 text-xs font-bold border border-emerald-700">
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" /> Precision Farm Analytics
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" /> {t.insightsKicker}
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-white">
-              Smart Farm Insights & Performance
+              {t.insightsHeading}
             </h1>
             <p className="text-stone-300 text-xs sm:text-sm max-w-xl">
-              Track soil moisture trends, crop yield estimations vs targets, disease risk distributions, and automated irrigation schedules.
+              {t.insightsSub}
             </p>
           </div>
 
           <VoiceAssistant
-            textToRead={`Farm health score is ${data.farmHealthScore} percent. Soil health index is ${data.soilHealthIndex} percent. Yield targets are on track for paddy, wheat, and maize.`}
+            textToRead={`${t.farmHealthScore}: ${data.farmHealthScore}%. ${t.soilHealthIndex}: ${data.soilHealthIndex}%.`}
             language={language}
           />
         </div>
@@ -56,31 +58,31 @@ export const FarmInsightsView: React.FC<FarmInsightsViewProps> = ({ language }) 
       {/* Primary KPI Metrics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm space-y-2">
-          <div className="text-xs font-extrabold text-stone-500 uppercase">Farm Health Score</div>
-          <div className="text-3xl font-black text-emerald-600">{data.farmHealthScore}%</div>
+          <div className="text-xs font-extrabold text-stone-500 uppercase">{t.farmHealthScore}</div>
+          <div className="text-3xl font-black text-emerald-600 tabular-nums">{data.farmHealthScore}%</div>
           <div className="w-full bg-stone-100 rounded-full h-2">
             <div className="bg-emerald-600 h-2 rounded-full" style={{ width: `${data.farmHealthScore}%` }} />
           </div>
         </div>
 
         <div className="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm space-y-2">
-          <div className="text-xs font-extrabold text-stone-500 uppercase">Soil Health Index</div>
-          <div className="text-3xl font-black text-emerald-700">{data.soilHealthIndex}%</div>
+          <div className="text-xs font-extrabold text-stone-500 uppercase">{t.soilHealthIndex}</div>
+          <div className="text-3xl font-black text-emerald-700 tabular-nums">{data.soilHealthIndex}%</div>
           <div className="w-full bg-stone-100 rounded-full h-2">
             <div className="bg-emerald-700 h-2 rounded-full" style={{ width: `${data.soilHealthIndex}%` }} />
           </div>
         </div>
 
         <div className="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm space-y-2">
-          <div className="text-xs font-extrabold text-stone-500 uppercase">Est. Overall Yield</div>
-          <div className="text-3xl font-black text-amber-600">15.3 Tons</div>
-          <div className="text-[11px] font-bold text-emerald-700">+4% above target</div>
+          <div className="text-xs font-extrabold text-stone-500 uppercase">{t.estOverallYield}</div>
+          <div className="text-3xl font-black text-amber-600 tabular-nums">15.3 T</div>
+          <div className="text-[11px] font-bold text-emerald-700">+4%</div>
         </div>
 
         <div className="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm space-y-2">
-          <div className="text-xs font-extrabold text-stone-500 uppercase">Irrigation Efficiency</div>
-          <div className="text-3xl font-black text-sky-600">94%</div>
-          <div className="text-[11px] text-stone-500 font-semibold">Smart Drip Timer Active</div>
+          <div className="text-xs font-extrabold text-stone-500 uppercase">{t.irrigationEff}</div>
+          <div className="text-3xl font-black text-sky-600 tabular-nums">94%</div>
+          <div className="text-[11px] text-stone-500 font-semibold">{t.optimalSoil}</div>
         </div>
       </div>
 
@@ -89,14 +91,14 @@ export const FarmInsightsView: React.FC<FarmInsightsViewProps> = ({ language }) 
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-black text-stone-900">
-              Weekly Soil Moisture & Humidity Trends
+              {t.moistureTrendTitle}
             </h3>
             <p className="text-xs text-stone-500">
-              Monitored via IoT sensors & satellite rainfall data
+              {t.soilMoistureLabel} · {t.humidityLabel}
             </p>
           </div>
           <span className="text-xs font-bold text-sky-800 bg-sky-100 px-3 py-1 rounded-full">
-            Live Stream
+            {t.featWeatherTag}
           </span>
         </div>
 
@@ -118,8 +120,8 @@ export const FarmInsightsView: React.FC<FarmInsightsViewProps> = ({ language }) 
               <YAxis stroke="#64748b" fontSize={11} />
               <Tooltip />
               <Legend wrapperStyle={{ fontSize: '12px' }} />
-              <Area type="monotone" dataKey="soilMoisture" name="Soil Moisture (%)" stroke="#10b981" fillOpacity={1} fill="url(#moistureGrad)" />
-              <Area type="monotone" dataKey="humidity" name="Air Humidity (%)" stroke="#0284c7" fillOpacity={1} fill="url(#humidityGrad)" />
+              <Area type="monotone" dataKey="soilMoisture" name={`${t.soilMoistureLabel} (%)`} stroke="#10b981" fillOpacity={1} fill="url(#moistureGrad)" />
+              <Area type="monotone" dataKey="humidity" name={`${t.humidityLabel} (%)`} stroke="#0284c7" fillOpacity={1} fill="url(#humidityGrad)" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -129,10 +131,10 @@ export const FarmInsightsView: React.FC<FarmInsightsViewProps> = ({ language }) 
       <div className="grid lg:grid-cols-12 gap-6">
         <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-stone-200 space-y-4">
           <h3 className="text-lg font-black text-stone-900">
-            Estimated Yield vs Target Projections
+            {t.yieldChartTitle}
           </h3>
           <p className="text-xs text-stone-500">
-            Comparison in tons / hectare across active crops
+            {t.yieldSoilTrends}
           </p>
 
           <div className="h-60 w-full pt-2">
@@ -143,8 +145,8 @@ export const FarmInsightsView: React.FC<FarmInsightsViewProps> = ({ language }) 
                 <YAxis stroke="#64748b" fontSize={11} />
                 <Tooltip />
                 <Legend wrapperStyle={{ fontSize: '12px' }} />
-                <Bar dataKey="target" name="Target Yield" fill="#94a3b8" radius={[6, 6, 0, 0]} />
-                <Bar dataKey="estimated" name="AI Est. Yield" fill="#059669" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="target" name={t.expectedHarvest} fill="#94a3b8" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="estimated" name={t.estOverallYield} fill="#059669" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -153,10 +155,10 @@ export const FarmInsightsView: React.FC<FarmInsightsViewProps> = ({ language }) 
         {/* Disease Risk Map */}
         <div className="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-stone-200 space-y-4">
           <h3 className="text-lg font-black text-stone-900">
-            Crop Disease Risk Index
+            {t.riskMapTitle}
           </h3>
           <p className="text-xs text-stone-500">
-            Current pathogen threat matrix
+            {t.diseaseRiskLabel}
           </p>
 
           <div className="space-y-3 pt-2">
@@ -164,7 +166,7 @@ export const FarmInsightsView: React.FC<FarmInsightsViewProps> = ({ language }) 
               <div key={idx} className="p-3.5 bg-stone-50 rounded-2xl border border-stone-200 flex items-center justify-between">
                 <div>
                   <div className="text-xs font-black text-stone-900">{item.crop}</div>
-                  <div className="text-[11px] text-stone-500">Primary threat: {item.primaryRisk}</div>
+                  <div className="text-[11px] text-stone-500">{item.primaryRisk}</div>
                 </div>
 
                 <span className={`text-xs font-black px-3 py-1 rounded-full ${
@@ -174,7 +176,7 @@ export const FarmInsightsView: React.FC<FarmInsightsViewProps> = ({ language }) 
                     ? 'bg-amber-100 text-amber-900'
                     : 'bg-emerald-100 text-emerald-800'
                 }`}>
-                  {item.riskLevel} Risk
+                  {item.riskLevel}
                 </span>
               </div>
             ))}
@@ -186,7 +188,7 @@ export const FarmInsightsView: React.FC<FarmInsightsViewProps> = ({ language }) 
       <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-stone-200 space-y-4">
         <h3 className="text-lg font-black text-stone-900 flex items-center gap-2">
           <Calendar className="w-5 h-5 text-emerald-700" />
-          <span>Automated Farm Activity Log</span>
+          <span>{t.activityLogTitle}</span>
         </h3>
 
         <div className="space-y-3">

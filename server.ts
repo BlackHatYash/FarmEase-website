@@ -170,18 +170,18 @@ app.post('/api/detect-disease', async (req, res) => {
             },
           },
           {
-            text: `Act as a senior plant pathologist. Analyze this leaf or plant image for diseases.
-Possible Crop context: ${cropHint || 'Unknown crop'}.
+            text: `You are a helpful crop doctor speaking directly to a farmer in plain, simple everyday words (avoid dense scientific jargon). Look closely at this leaf or plant photo.
+Crop type hint: ${cropHint || 'Unknown crop'}.
 
 Return a JSON object:
 {
-  "diseaseName": "Name of disease or 'Healthy Plant'",
+  "diseaseName": "Simple disease name (e.g. 'Tomato Early Blight' or 'Healthy Plant')",
   "confidence": number between 80 and 99,
   "isHealthy": boolean,
-  "visibleSymptoms": ["symptom 1", "symptom 2", "symptom 3"],
-  "possibleCauses": ["cause 1", "cause 2"],
-  "recommendedTreatment": ["actionable treatment 1", "actionable treatment 2", "actionable treatment 3"],
-  "preventionTips": ["tip 1", "tip 2"]
+  "visibleSymptoms": ["plain visual sign 1", "plain visual sign 2", "plain visual sign 3"],
+  "possibleCauses": ["simple reason why it happened 1", "simple reason 2"],
+  "recommendedTreatment": ["clear step 1 to treat right now", "clear step 2", "clear step 3"],
+  "preventionTips": ["easy habit to prevent next season 1", "easy habit 2"]
 }`
           }
         ],
@@ -213,7 +213,7 @@ Return a JSON object:
             imageUrl: imageBase64,
             cropName: cropHint || 'Crop',
             ...parsed,
-            disclaimer: 'Disclaimer: AI diagnostic results are provided for guidance. Consult a qualified agricultural extension worker for severe crop issues.',
+            disclaimer: 'Note: This check is for guidance. If the problem spreads quickly across your field, show a leaf to your local Krishi Kendra or agriculture officer.',
             scannedAt: new Date().toISOString()
           }
         });
@@ -223,29 +223,111 @@ Return a JSON object:
     }
   }
 
-  // Fallback demo result
-  const demoDiseases = [
-    {
-      diseaseName: 'Tomato Early Blight (Alternaria solani)',
-      confidence: 94,
-      isHealthy: false,
-      visibleSymptoms: ['Concentric dark brown circular spots on lower leaves', 'Yellow halo surrounding leaf lesions', 'Premature leaf drop'],
-      possibleCauses: ['High fungal spore presence in soil residues', 'Extended leaf wetness & warmth (24-29°C)', 'Poor crop air circulation'],
-      recommendedTreatment: ['Remove and destroy severely affected leaves immediately', 'Apply Copper-based or Mancozeb fungicide according to package instructions', 'Avoid overhead sprinkler watering to keep foliage dry'],
-      preventionTips: ['Practice 3-year crop rotation with non-solanaceous crops', 'Mulch soil around plant base to prevent soil splash', 'Ensure adequate plant spacing']
+  // Crop-aware plain-language fallback result when AI client is unconfigured/fails
+  const hint = (cropHint || 'tomato').toLowerCase();
+  const cropFallbackMap = {
+    healthyRice: {
+      diseaseName: 'Healthy Rice / Paddy Leaf',
+      confidence: 96,
+      isHealthy: true,
+      visibleSymptoms: [
+        'Rich green leaf color with no brown or yellow spots',
+        'Firm, upright leaf blade with clean edges',
+        'No powdery dust or sticky pest marks visible'
+      ],
+      possibleCauses: [
+        'Good balanced water and sunlight in your field',
+        'Healthy root growth and clean crop spacing'
+      ],
+      recommendedTreatment: [
+        'No chemical spray is needed right now — your crop looks healthy',
+        'Keep normal watering schedule and clear out nearby weeds',
+        'Check lower leaves once a week after rain just to stay safe'
+      ],
+      preventionTips: [
+        'Keep proper spacing between plants so fresh air moves through',
+        'Avoid adding too much urea fertilizer at once'
+      ]
     },
-    {
-      diseaseName: 'Wheat Yellow Rust (Puccinia striiformis)',
+    corn: {
+      diseaseName: 'Corn Common Rust',
       confidence: 91,
       isHealthy: false,
-      visibleSymptoms: ['Linear yellow pustules along leaf veins', 'Powdery orange-yellow spores on upper leaf surface', 'Stunted plant growth'],
-      possibleCauses: ['Cool humid weather conditions (10-15°C)', 'Airborne spore dispersal from neighboring fields', 'Susceptible crop variety'],
-      recommendedTreatment: ['Apply systemic triazole fungicide (e.g. Propiconazole or Tebuconazole)', 'Ensure balanced nitrogen fertilization without over-dosing', 'Monitor surrounding crops daily'],
-      preventionTips: ['Sow disease-resistant wheat varieties', 'Avoid excessive late-season nitrogen applications', 'Destroy volunteer wheat plants before sowing']
+      visibleSymptoms: [
+        'Small reddish-brown raised spots on both sides of the leaf',
+        'Powdery rust dust rubs off when you touch the spots',
+        'Leaves slowly turn yellow around the brown patches'
+      ],
+      possibleCauses: [
+        'Cool, damp mornings and heavy dew sitting on leaves',
+        'Wind blowing rust spores from nearby infected fields'
+      ],
+      recommendedTreatment: [
+        'Remove heavily spotted bottom leaves if only a few plants are affected',
+        'Ask your farm shop for a safe maize fungicide (Mancozeb or Azoxystrobin) and spray in dry morning weather',
+        'Do not spray if rain is expected within the next 6 hours'
+      ],
+      preventionTips: [
+        'Choose rust-resistant hybrid corn seeds for the next sowing',
+        'Clear away old corn stalks after harvest before planting again'
+      ]
+    },
+    wheat: {
+      diseaseName: 'Wheat Yellow Rust',
+      confidence: 91,
+      isHealthy: false,
+      visibleSymptoms: [
+        'Bright yellow stripes running along the leaf length',
+        'Yellow powder comes off on your fingers when touched',
+        'Plants look weak and grains stay smaller than normal'
+      ],
+      possibleCauses: [
+        'Cool humid mornings (10–15°C) and morning fog',
+        'Fungus spores carried by wind from nearby fields'
+      ],
+      recommendedTreatment: [
+        'Spray a recommended triazole fungicide (such as Propiconazole) early morning or evening',
+        'Avoid giving extra nitrogen/urea while rust is active',
+        'Check neighboring wheat plots every 3 days for new yellow patches'
+      ],
+      preventionTips: [
+        'Sow rust-resistant wheat varieties next season',
+        'Remove self-grown wheat plants before main sowing'
+      ]
+    },
+    tomato: {
+      diseaseName: 'Tomato Early Blight',
+      confidence: 94,
+      isHealthy: false,
+      visibleSymptoms: [
+        'Dark brown round spots with rings on older bottom leaves',
+        'Yellow ring around each brown spot',
+        'Bottom leaves dry up and fall off early'
+      ],
+      possibleCauses: [
+        'Rainwater or sprinkler drops splashing soil germs onto lower leaves',
+        'Warm humid weather keeping leaves wet for many hours'
+      ],
+      recommendedTreatment: [
+        'Pluck off badly spotted bottom leaves and throw them away outside the field (do not put in compost)',
+        'Water at the soil base using drip or furrow instead of wetting the leaves',
+        'Spray Copper Oxychloride or Mancozeb as advised on the pack in calm morning weather'
+      ],
+      preventionTips: [
+        'Cover soil around tomato roots with dry straw mulch to stop mud splash',
+        'Do not plant tomatoes or potatoes in the same spot every year'
+      ]
     }
-  ];
+  };
 
-  const selectedDemo = demoDiseases[Math.floor(Math.random() * demoDiseases.length)];
+  let selectedDemo = cropFallbackMap.tomato;
+  if (hint.includes('rice') || hint.includes('paddy')) {
+    selectedDemo = cropFallbackMap.healthyRice;
+  } else if (hint.includes('corn') || hint.includes('maize')) {
+    selectedDemo = cropFallbackMap.corn;
+  } else if (hint.includes('wheat')) {
+    selectedDemo = cropFallbackMap.wheat;
+  }
 
   return res.json({
     success: true,
@@ -255,7 +337,7 @@ Return a JSON object:
       imageUrl: imageBase64,
       cropName: cropHint || 'Crop',
       ...selectedDemo,
-      disclaimer: 'Disclaimer: AI diagnostic results are provided for guidance. Consult a qualified agricultural extension worker for severe crop issues.',
+      disclaimer: 'Note: This check is for guidance. If the problem spreads quickly across your field, show a leaf to your local Krishi Kendra or agriculture officer.',
       scannedAt: new Date().toISOString()
     }
   });

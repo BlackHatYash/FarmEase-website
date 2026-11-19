@@ -43,14 +43,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <div className="flex flex-wrap items-center gap-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-800/80 text-emerald-200 text-xs font-bold border border-emerald-700">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                Location: {user?.location || weather?.location || 'Punjab, India'} ({user?.farmSize || 5} {user?.farmSizeUnit || 'acres'})
+                {t.locationLabel}: {user?.location || weather?.location || 'Punjab, India'} ({user?.farmSize || 5} {user?.farmSizeUnit || 'acres'})
               </div>
               <button
                 onClick={() => onNavigate('login')}
                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-700/60 hover:bg-emerald-600 text-emerald-100 hover:text-white text-xs font-bold border border-emerald-600/70 transition-colors cursor-pointer"
-                title="Switch Farmer Profile or Open Login Portal"
+                title={t.switchProfile}
               >
-                <span>{user ? 'Switch Profile' : 'Log In'}</span>
+                <span>{user ? t.switchProfile : t.login}</span>
               </button>
             </div>
 
@@ -60,7 +60,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </h1>
 
             <p className="text-emerald-100 text-xs sm:text-sm max-w-xl leading-relaxed">
-              Here is your daily agricultural briefing. AI model active & monitoring soil moisture, crop disease risks, and local weather patterns.
+              {t.dailyBriefing}
             </p>
 
             <div className="pt-2">
@@ -102,7 +102,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <ShieldCheck className="w-5 h-5 text-emerald-400" />
                 <span>{t.excellent}</span>
               </div>
-              <div className="text-[11px] text-emerald-200">Optimal Soil Nitrogen & Moisture</div>
+              <div className="text-[11px] text-emerald-200">{t.optimalSoil}</div>
             </div>
           </div>
         </div>
@@ -130,7 +130,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <div className="text-sm sm:text-base font-extrabold leading-tight">
                 {t.recommendCropBtn}
               </div>
-              <div className="text-[11px] text-emerald-100 mt-0.5">Match soil & pH</div>
+              <div className="text-[11px] text-emerald-100 mt-0.5">{t.matchSoilPh}</div>
             </div>
           </button>
 
@@ -148,7 +148,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <div className="text-sm sm:text-base font-extrabold leading-tight">
                 {t.detectDiseaseBtn}
               </div>
-              <div className="text-[11px] text-amber-100 mt-0.5">Scan leaf photo</div>
+              <div className="text-[11px] text-amber-100 mt-0.5">{t.scanLeafPhoto}</div>
             </div>
           </button>
 
@@ -166,7 +166,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <div className="text-sm sm:text-base font-extrabold leading-tight">
                 {t.checkWeatherBtn}
               </div>
-              <div className="text-[11px] text-sky-100 mt-0.5">Rain & spray advice</div>
+              <div className="text-[11px] text-sky-100 mt-0.5">{t.rainSprayAdvice}</div>
             </div>
           </button>
 
@@ -184,7 +184,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <div className="text-sm sm:text-base font-extrabold leading-tight">
                 {t.viewInsightsBtn}
               </div>
-              <div className="text-[11px] text-stone-300 mt-0.5">Yield & soil trends</div>
+              <div className="text-[11px] text-stone-300 mt-0.5">{t.yieldSoilTrends}</div>
             </div>
           </button>
         </div>
@@ -200,10 +200,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </div>
               <div>
                 <h3 className="text-xl font-extrabold text-stone-900">
-                  Current Weather & Agricultural Advisory
+                  {t.currentWeatherAdvisory}
                 </h3>
                 <p className="text-xs font-semibold text-stone-500">
-                  Location: {weather.location}
+                  {t.locationLabel}: {weather.location}
                 </p>
               </div>
             </div>
@@ -212,7 +212,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               onClick={() => onNavigate('weather')}
               className="inline-flex items-center gap-1 text-xs font-extrabold text-emerald-700 hover:text-emerald-800 hover:underline cursor-pointer"
             >
-              <span>Full Weather Page</span>
+              <span>{t.fullWeatherPage}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -221,34 +221,34 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200/80">
               <div className="text-xs text-stone-500 font-semibold flex items-center gap-1.5 mb-1">
-                <Thermometer className="w-4 h-4 text-amber-600" /> Temperature
+                <Thermometer className="w-4 h-4 text-amber-600" /> {t.temperatureLabel}
               </div>
               <div className="text-2xl font-black text-stone-900">{weather.currentTemp}°C</div>
-              <div className="text-[11px] text-stone-500">Feels like {weather.feelsLike}°C</div>
+              <div className="text-[11px] text-stone-500">{t.feelsLikeLabel} {weather.feelsLike}°C</div>
             </div>
 
             <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200/80">
               <div className="text-xs text-stone-500 font-semibold flex items-center gap-1.5 mb-1">
-                <Droplets className="w-4 h-4 text-sky-600" /> Humidity
+                <Droplets className="w-4 h-4 text-sky-600" /> {t.humidityLabel}
               </div>
               <div className="text-2xl font-black text-stone-900">{weather.humidity}%</div>
-              <div className="text-[11px] text-stone-500">Soil moisture: {weather.soilMoisture}%</div>
+              <div className="text-[11px] text-stone-500">{t.soilMoistureLabel}: {weather.soilMoisture}%</div>
             </div>
 
             <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200/80">
               <div className="text-xs text-stone-500 font-semibold flex items-center gap-1.5 mb-1">
-                <CloudRain className="w-4 h-4 text-blue-600" /> Rain Chance
+                <CloudRain className="w-4 h-4 text-blue-600" /> {t.rainChanceLabel}
               </div>
               <div className="text-2xl font-black text-stone-900">{weather.rainfallProbability}%</div>
-              <div className="text-[11px] text-stone-500">Afternoon scattered showers</div>
+              <div className="text-[11px] text-stone-500">{weather.condition}</div>
             </div>
 
             <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200/80">
               <div className="text-xs text-stone-500 font-semibold flex items-center gap-1.5 mb-1">
-                <Wind className="w-4 h-4 text-teal-600" /> Wind Speed
+                <Wind className="w-4 h-4 text-teal-600" /> {t.windSpeedLabel}
               </div>
               <div className="text-2xl font-black text-stone-900">{weather.windSpeed} km/h</div>
-              <div className="text-[11px] text-emerald-700 font-semibold">Suitable for spraying</div>
+              <div className="text-[11px] text-emerald-700 font-semibold">{t.suitableSpraying}</div>
             </div>
           </div>
 
@@ -256,7 +256,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-xs text-emerald-900 flex items-start gap-3">
             <span className="text-base">💡</span>
             <div className="space-y-1">
-              <span className="font-bold">Farming Advisory: </span>
+              <span className="font-bold">{t.farmingAdvisoryLabel}: </span>
               <span>{weather.farmingAdvice.irrigation} {weather.farmingAdvice.spraying}</span>
             </div>
           </div>
@@ -264,7 +264,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           {/* 7-Day Forecast Mini Cards */}
           <div>
             <div className="text-xs font-extrabold uppercase tracking-wider text-stone-500 mb-2">
-              7-Day Forecast
+              {t.sevenDayForecast}
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
               {weather.forecast.map((day, i) => (
@@ -294,7 +294,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               onClick={() => onNavigate('disease-detection')}
               className="text-xs font-bold text-amber-700 hover:text-amber-800 hover:underline cursor-pointer"
             >
-              Scan New Image
+              {t.scanNewImage}
             </button>
           </div>
 
@@ -307,10 +307,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
               <button
                 onClick={() => onNavigate('disease-detection')}
-                className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs"
+                className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
-                <span>Upload Leaf Image</span>
+                <span>{t.uploadLeafImage}</span>
               </button>
             </div>
           ) : (
@@ -329,15 +329,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         {scan.diseaseName}
                       </span>
                       <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 shrink-0">
-                        {scan.confidence}% Confidence
+                        {scan.confidence}% {t.confidenceLabel}
                       </span>
                     </div>
                     <p className="text-xs text-stone-600 truncate mt-0.5">
-                      Symptoms: {scan.visibleSymptoms?.[0]}
+                      {t.symptoms}: {scan.visibleSymptoms?.[0]}
                     </p>
                     <div className="text-[10px] text-stone-400 mt-1 flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      <span>Scanned on {new Date(scan.scannedAt).toLocaleDateString()}</span>
+                      <span>{new Date(scan.scannedAt).toLocaleDateString()}</span>
                     </div>
                   </div>
                 </div>
@@ -357,7 +357,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               onClick={() => onNavigate('crop-recommendation')}
               className="text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline cursor-pointer"
             >
-              Get New Match
+              {t.getNewMatch}
             </button>
           </div>
 
@@ -370,10 +370,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
               <button
                 onClick={() => onNavigate('crop-recommendation')}
-                className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-white font-bold text-xs"
+                className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-white font-bold text-xs cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
-                <span>Calculate Crop Match</span>
+                <span>{t.calculateCropMatch}</span>
               </button>
             </div>
           ) : (
@@ -386,11 +386,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         {crop.cropName}
                       </h4>
                       <div className="text-xs text-emerald-700 font-medium">
-                        Expected Yield: {crop.expectedYield} • Duration: {crop.growingDuration}
+                        {crop.expectedYield} • {crop.growingDuration}
                       </div>
                     </div>
                     <span className="px-2.5 py-1 rounded-full bg-emerald-700 text-white font-black text-xs shadow-xs">
-                      {crop.suitabilityScore}% Match
+                      {crop.suitabilityScore}% {t.matchLabel}
                     </span>
                   </div>
 

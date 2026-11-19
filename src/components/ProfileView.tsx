@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { User, MapPin, Ruler, Sprout, Globe, Check, LogOut, ShieldCheck, Mail, Phone, Calendar } from 'lucide-react';
+import { MapPin, Globe, Check, LogOut, ShieldCheck, Mail, Phone, Calendar } from 'lucide-react';
 import { FarmerProfile, Language } from '../types';
-import { translations, languageNames } from '../lib/translations';
+import { translations, languageNames, languageFonts } from '../lib/translations';
 
 interface ProfileViewProps {
   user: FarmerProfile;
@@ -33,7 +33,8 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
       name,
       location,
       farmSize: parseFloat(farmSize) || 1,
-      mainCrops: mainCrops.split(',').map(s => s.trim())
+      mainCrops: mainCrops.split(',').map(s => s.trim()),
+      language
     };
     onUpdateUser(updated);
     setSaved(true);
@@ -66,17 +67,61 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         </button>
       </div>
 
+      {/* Prominent Language & Font Script Picker */}
+      <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-stone-200 space-y-4">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <Globe className="w-5 h-5 text-emerald-700" />
+            <h2 className="text-lg font-extrabold text-stone-900">
+              {t.preferredLangLabel}
+            </h2>
+          </div>
+          <span className="text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-lg">
+            {languageNames[language].nativeName} · {languageFonts[language].scriptName}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+          {(Object.keys(languageNames) as Language[]).map((langKey) => {
+            const active = language === langKey;
+            const fontMeta = languageFonts[langKey];
+            const langMeta = languageNames[langKey];
+            return (
+              <button
+                key={langKey}
+                type="button"
+                onClick={() => setLanguage(langKey)}
+                style={{ fontFamily: fontMeta.fontFamily }}
+                className={`p-3 min-h-[68px] rounded-xl border text-left transition-colors cursor-pointer flex flex-col justify-between ${
+                  active
+                    ? 'bg-emerald-50 border-emerald-600 text-emerald-950 ring-1 ring-emerald-600'
+                    : 'bg-stone-50 border-stone-200 hover:bg-stone-100 text-stone-900'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-base font-bold leading-snug">{langMeta.nativeName}</span>
+                  {active && <Check className="w-4 h-4 text-emerald-700 shrink-0" />}
+                </div>
+                <div className="text-[11px] text-stone-600 mt-1">
+                  {langMeta.name} · {fontMeta.scriptName}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       <div className="grid md:grid-cols-12 gap-8">
         {/* Form Details */}
         <div className="md:col-span-8 bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-stone-200 space-y-6">
           <h2 className="text-lg font-extrabold text-stone-900">
-            Edit Farmer & Farm Details
+            {t.editProfileHeading}
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-bold text-stone-700 mb-1">
-                Farmer Name
+                {t.farmerNameLabel}
               </label>
               <input
                 type="text"
@@ -89,7 +134,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-stone-700 mb-1">
-                  Location / Region
+                  {t.locationLabel}
                 </label>
                 <input
                   type="text"
@@ -101,7 +146,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-stone-700 mb-1">
-                  Farm Size (Acres)
+                  {t.landSizeAcres}
                 </label>
                 <input
                   type="number"
@@ -115,7 +160,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
 
             <div>
               <label className="block text-xs font-bold text-stone-700 mb-1">
-                Main Crops Grown
+                {t.mainCropsLabel}
               </label>
               <input
                 type="text"
@@ -133,10 +178,10 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 {saved ? (
                   <>
                     <Check className="w-4 h-4 text-emerald-300" />
-                    <span>Profile Saved!</span>
+                    <span>{t.profileSavedMsg}</span>
                   </>
                 ) : (
-                  <span>Update Farm Profile</span>
+                  <span>{t.updateProfileBtn}</span>
                 )}
               </button>
             </div>
@@ -147,7 +192,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         <div className="md:col-span-4 space-y-4">
           <div className="bg-stone-50 rounded-3xl p-6 border border-stone-200 space-y-4">
             <h3 className="text-sm font-extrabold text-stone-900 uppercase tracking-wider">
-              Registration Meta
+              {t.accountInfoTitle}
             </h3>
 
             <div className="space-y-3 text-xs text-stone-700">
@@ -161,7 +206,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               </div>
               <div className="flex items-center gap-2.5">
                 <Calendar className="w-4 h-4 text-emerald-600" />
-                <span>Member since {new Date(user.joinedDate).toLocaleDateString()}</span>
+                <span>{new Date(user.joinedDate).toLocaleDateString()}</span>
               </div>
             </div>
           </div>
@@ -169,10 +214,10 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           <div className="bg-emerald-50 rounded-3xl p-6 border border-emerald-200 text-xs text-emerald-950 space-y-2">
             <div className="font-bold flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-emerald-700" />
-              <span>AI Data Privacy Guaranteed</span>
+              <span>{t.privacyTitle}</span>
             </div>
             <p className="leading-relaxed">
-              Your farm details, soil pH records, and leaf images are kept secure for tailored local crop recommendations.
+              {t.privacyDesc}
             </p>
           </div>
         </div>

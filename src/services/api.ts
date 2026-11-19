@@ -60,36 +60,138 @@ export async function detectPlantDisease(imageBase64: string, cropHint?: string)
     return { isLiveAi: json.isLiveAi ?? false, data: json.data };
   } catch (error) {
     console.warn('Disease scan API fallback used:', error);
+    const hint = (cropHint || 'tomato').toLowerCase();
+
+    if (hint.includes('rice') || hint.includes('paddy')) {
+      return {
+        isLiveAi: false,
+        data: {
+          id: 'scan_fallback_' + Date.now(),
+          imageUrl: imageBase64,
+          cropName: cropHint || 'Rice/Paddy',
+          diseaseName: 'Healthy Rice / Paddy Leaf',
+          confidence: 96,
+          isHealthy: true,
+          visibleSymptoms: [
+            'Rich green leaf color with no brown or yellow spots',
+            'Firm, upright leaf blade with clean edges',
+            'No powdery dust or sticky pest marks visible'
+          ],
+          possibleCauses: [
+            'Good balanced water and sunlight in your field',
+            'Healthy root growth and clean plant spacing'
+          ],
+          recommendedTreatment: [
+            'No chemical spray is needed right now — your crop looks healthy',
+            'Keep normal watering schedule and clear out nearby weeds',
+            'Check lower leaves once a week after rain just to stay safe'
+          ],
+          preventionTips: [
+            'Keep proper spacing between plants so fresh air moves through',
+            'Avoid adding too much urea fertilizer at once'
+          ],
+          disclaimer: 'Note: This check is for guidance. If the problem spreads quickly across your field, show a leaf to your local Krishi Kendra or agriculture officer.',
+          scannedAt: new Date().toISOString()
+        }
+      };
+    }
+
+    if (hint.includes('corn') || hint.includes('maize')) {
+      return {
+        isLiveAi: false,
+        data: {
+          id: 'scan_fallback_' + Date.now(),
+          imageUrl: imageBase64,
+          cropName: cropHint || 'Corn/Maize',
+          diseaseName: 'Corn Common Rust',
+          confidence: 91,
+          isHealthy: false,
+          visibleSymptoms: [
+            'Small reddish-brown raised spots on both sides of the leaf',
+            'Powdery rust dust rubs off when you touch the spots',
+            'Leaves slowly turn yellow around the brown patches'
+          ],
+          possibleCauses: [
+            'Cool, damp mornings and heavy dew sitting on leaves',
+            'Wind blowing rust spores from nearby infected fields'
+          ],
+          recommendedTreatment: [
+            'Remove heavily spotted bottom leaves if only a few plants are affected',
+            'Ask your farm shop for a safe maize fungicide (Mancozeb or Azoxystrobin) and spray in dry morning weather',
+            'Do not spray if rain is expected within the next 6 hours'
+          ],
+          preventionTips: [
+            'Choose rust-resistant hybrid corn seeds for the next sowing',
+            'Clear away old corn stalks after harvest before planting again'
+          ],
+          disclaimer: 'Note: This check is for guidance. If the problem spreads quickly across your field, show a leaf to your local Krishi Kendra or agriculture officer.',
+          scannedAt: new Date().toISOString()
+        }
+      };
+    }
+
+    if (hint.includes('wheat')) {
+      return {
+        isLiveAi: false,
+        data: {
+          id: 'scan_fallback_' + Date.now(),
+          imageUrl: imageBase64,
+          cropName: cropHint || 'Wheat',
+          diseaseName: 'Wheat Yellow Rust',
+          confidence: 91,
+          isHealthy: false,
+          visibleSymptoms: [
+            'Bright yellow stripes running along the leaf length',
+            'Yellow powder comes off on your fingers when touched',
+            'Plants look weak and grains stay smaller than normal'
+          ],
+          possibleCauses: [
+            'Cool humid mornings (10–15°C) and morning fog',
+            'Fungus spores carried by wind from nearby fields'
+          ],
+          recommendedTreatment: [
+            'Spray a recommended triazole fungicide (such as Propiconazole) early morning or evening',
+            'Avoid giving extra nitrogen/urea while rust is active',
+            'Check neighboring wheat plots every 3 days for new yellow patches'
+          ],
+          preventionTips: [
+            'Sow rust-resistant wheat varieties next season',
+            'Remove self-grown wheat plants before main sowing'
+          ],
+          disclaimer: 'Note: This check is for guidance. If the problem spreads quickly across your field, show a leaf to your local Krishi Kendra or agriculture officer.',
+          scannedAt: new Date().toISOString()
+        }
+      };
+    }
+
     return {
       isLiveAi: false,
       data: {
         id: 'scan_fallback_' + Date.now(),
         imageUrl: imageBase64,
         cropName: cropHint || 'Tomato',
-        diseaseName: 'Tomato Early Blight (Alternaria solani)',
+        diseaseName: 'Tomato Early Blight',
         confidence: 94,
         isHealthy: false,
         visibleSymptoms: [
-          'Concentric brown rings on lower foliage',
-          'Yellow halo around leaf necrotic lesions',
-          'Accelerated leaf yellowing and dropping'
+          'Dark brown round spots with rings on older bottom leaves',
+          'Yellow ring around each brown spot',
+          'Bottom leaves dry up and fall off early'
         ],
         possibleCauses: [
-          'Fungal spore survival in crop debris from previous season',
-          'High relative humidity (>80%) combined with temperatures of 24–28°C',
-          'Splash transmission from irrigation or rainwater'
+          'Rainwater or sprinkler drops splashing soil germs onto lower leaves',
+          'Warm humid weather keeping leaves wet for many hours'
         ],
         recommendedTreatment: [
-          'Prune affected bottom leaves and dispose of away from compost',
-          'Apply Copper Hydroxide or Mancozeb fungicide spray early morning',
-          'Switch to root-level drip irrigation rather than overhead sprinklers'
+          'Pluck off badly spotted bottom leaves and throw them away outside the field (do not put in compost)',
+          'Water at the soil base using drip or furrow instead of wetting the leaves',
+          'Spray Copper Oxychloride or Mancozeb as advised on the pack in calm morning weather'
         ],
         preventionTips: [
-          'Rotate crops with non-solanaceous varieties every 2-3 seasons',
-          'Apply organic straw mulch around plant base',
-          'Space plants at least 45 cm apart to ensure airflow'
+          'Cover soil around tomato roots with dry straw mulch to stop mud splash',
+          'Do not plant tomatoes or potatoes in the same spot every year'
         ],
-        disclaimer: 'Disclaimer: AI results are informational. Please consult a agricultural specialist for severe crop issues.',
+        disclaimer: 'Note: This check is for guidance. If the problem spreads quickly across your field, show a leaf to your local Krishi Kendra or agriculture officer.',
         scannedAt: new Date().toISOString()
       }
     };

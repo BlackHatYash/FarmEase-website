@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Sprout, LayoutDashboard, Stethoscope, CloudSun, BarChart3, User, LogIn, UserPlus, Menu, X, Globe, Type, Bell } from 'lucide-react';
 import { Language, FarmerProfile, WeatherAlert } from '../types';
-import { translations, languageNames } from '../lib/translations';
+import { translations, languageNames, languageFonts } from '../lib/translations';
 
 interface NavbarProps {
   currentTab: string;
@@ -54,14 +54,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setCurrentTab('home')}
             >
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-lg transform group-hover:scale-105 transition-all">
-                <Sprout className="w-6 h-6 sm:w-7 sm:h-7 text-emerald-95" />
+                <Sprout className="w-6 h-6 sm:w-7 sm:h-7 text-emerald-950" />
               </div>
               <div>
                 <span className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-1">
-                  Farm<span className="text-emerald-400">Ease</span>
+                  {language === 'en' ? (
+                    <>Farm<span className="text-emerald-400">Ease</span></>
+                  ) : (
+                    t.appName
+                  )}
                 </span>
                 <span className="hidden sm:block text-xs font-medium text-emerald-200 tracking-wider">
-                  Smart Farming • Better Yields
+                  {t.brandTagline}
                 </span>
               </div>
             </div>
@@ -141,12 +145,19 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="relative flex items-center bg-emerald-800/80 hover:bg-emerald-800 border border-emerald-700 rounded-lg px-2 py-1 text-xs text-emerald-100">
                 <Globe className="w-3.5 h-3.5 text-emerald-300 mr-1.5 hidden sm:inline" />
                 <select
+                  aria-label="Select app language and script"
                   value={language}
                   onChange={(e) => setLanguage(e.target.value as Language)}
+                  style={{ fontFamily: (languageFonts[language] || languageFonts.en).fontFamily }}
                   className="bg-transparent text-white font-medium focus:outline-none cursor-pointer py-1"
                 >
                   {(Object.keys(languageNames) as Language[]).map((lang) => (
-                    <option key={lang} value={lang} className="text-gray-900 bg-white">
+                    <option
+                      key={lang}
+                      value={lang}
+                      style={{ fontFamily: languageFonts[lang].fontFamily }}
+                      className="text-gray-900 bg-white"
+                    >
                       {languageNames[lang].nativeName} ({languageNames[lang].name})
                     </option>
                   ))}
@@ -161,10 +172,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     ? 'bg-amber-400 text-amber-950 font-bold'
                     : 'bg-emerald-800/60 text-emerald-200 hover:bg-emerald-800'
                 }`}
-                title="Toggle Text Size for accessibility"
+                title={t.accessibilityText}
               >
                 <Type className="w-4 h-4" />
-                <span className="hidden sm:inline">{isLargeText ? 'Large' : 'Normal'}</span>
+                <span className="hidden sm:inline">{isLargeText ? t.largeText : t.normalText}</span>
               </button>
 
               {/* User Profile / Auth */}
@@ -192,15 +203,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                     title="Login or Switch Farmer Account"
                   >
                     <LogIn className="w-3.5 h-3.5" />
-                    <span>Login</span>
+                    <span>{t.login}</span>
                   </button>
                   <button
                     onClick={() => onOpenAuth('signup')}
                     className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-bold rounded-lg bg-amber-400 hover:bg-amber-300 text-stone-950 transition-colors shadow-sm cursor-pointer"
-                    title="Register New Farmer"
+                    title={t.signup}
                   >
                     <UserPlus className="w-3.5 h-3.5" />
-                    <span>Sign Up</span>
+                    <span>{t.signup}</span>
                   </button>
                 </div>
               ) : (
@@ -291,7 +302,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-emerald-800/80 hover:bg-emerald-800 text-white text-xs font-bold border border-emerald-700/60 transition-colors cursor-pointer"
                   >
                     <LogIn className="w-3.5 h-3.5" />
-                    <span>Login Portal</span>
+                    <span>{t.login}</span>
                   </button>
                   <button
                     onClick={() => {
@@ -301,7 +312,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-stone-950 text-xs font-black shadow-sm transition-colors cursor-pointer"
                   >
                     <UserPlus className="w-3.5 h-3.5" />
-                    <span>Sign Up</span>
+                    <span>{t.signup}</span>
                   </button>
                 </div>
               </div>

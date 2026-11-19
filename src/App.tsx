@@ -14,6 +14,7 @@ import { LoginPage } from './components/LoginPage';
 import { AuthModal } from './components/AuthModal';
 import { fetchWeatherData } from './services/api';
 import tomatoBlightImg from './assets/images/tomato_blight_leaf_1795064405537.jpg';
+import { translations, languageFonts } from './lib/translations';
 
 // Pre-seeded initial user profile so the dashboard is immediately interactive
 const initialUser: FarmerProfile = {
@@ -42,12 +43,26 @@ const getStoredActiveUser = (): FarmerProfile | null => {
   return initialUser;
 };
 
+const getStoredLanguage = (): Language => {
+  try {
+    const saved = localStorage.getItem('farmease_lang') as Language | null;
+    if (saved && saved in languageFonts) {
+      return saved;
+    }
+  } catch {
+    // ignore storage errors
+  }
+  return 'en';
+};
+
 export default function App() {
   const [currentTab, setCurrentTab] = useState<string>('home');
-  const [language, setLanguage] = useState<Language>('en');
+  const [language, setLanguage] = useState<Language>(getStoredLanguage);
   const [isLargeText, setIsLargeText] = useState<boolean>(false);
   const [user, setUser] = useState<FarmerProfile | null>(getStoredActiveUser);
   const [weather, setWeather] = useState<WeatherData | null>(null);
+  const t = translations[language] || translations.en;
+  const activeFont = languageFonts[language] || languageFonts.en;
 
   // Auth Modal state
   const [authModalOpen, setAuthModalOpen] = useState<boolean>(false);
@@ -109,6 +124,19 @@ export default function App() {
   ]);
 
   useEffect(() => {
+    const fontConfig = languageFonts[language] || languageFonts.en;
+    document.documentElement.lang = language;
+    document.documentElement.style.setProperty('--font-sans', fontConfig.fontFamily);
+    document.documentElement.style.fontFamily = fontConfig.fontFamily;
+    document.body.style.fontFamily = fontConfig.fontFamily;
+    try {
+      localStorage.setItem('farmease_lang', language);
+    } catch {
+      // ignore storage errors
+    }
+  }, [language]);
+
+  useEffect(() => {
     fetchWeatherData(user?.location || 'Punjab, India')
       .then(w => setWeather(w))
       .catch(err => console.error(err));
@@ -162,9 +190,12 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen bg-stone-100 text-stone-900 font-sans antialiased ${
-      isLargeText ? 'text-lg sm:text-xl' : 'text-base'
-    }`}>
+    <div
+      style={{ fontFamily: activeFont.fontFamily }}
+      className={`min-h-screen bg-stone-100 text-stone-900 font-sans antialiased ${activeFont.cssClass} ${
+        isLargeText ? 'text-lg sm:text-xl' : 'text-base'
+      }`}
+    >
       {/* Navigation Header */}
       <Navbar
         currentTab={currentTab}
@@ -316,7 +347,7 @@ export default function App() {
       <footer className="no-print bg-emerald-950 text-emerald-200 border-t border-emerald-800/80 py-10 mt-12 mb-12 lg:mb-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
           <div className="flex flex-wrap items-center gap-3 font-extrabold text-white text-sm">
-            <span>🌱 FarmEase Digital Assistant</span>
+            <span>🌱 {t.footerTitle}</span>
             <span className="text-emerald-500">•</span>
             <button
               onClick={() => {
@@ -325,11 +356,11 @@ export default function App() {
               }}
               className="text-emerald-300 hover:text-white underline font-bold transition-colors cursor-pointer"
             >
-              🔐 Farmer Login Portal
+              🔐 {t.footerPortal}
             </button>
           </div>
           <p className="text-emerald-300/80 text-center sm:text-right">
-            Empowering farmers with AI crop recommendations, plant pathology diagnostics, and weather intelligence.
+            {t.footerTagline}
           </p>
         </div>
       </footer>

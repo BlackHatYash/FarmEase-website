@@ -96,48 +96,6 @@ const PH_PRESETS: { label: string; hint: string; value: number }[] = [
 const PREVIOUS_CROPS = ['Wheat', 'Rice (Paddy)', 'Cotton', 'Pulses / Dal', 'Sugarcane', 'Fallow / Empty'];
 const QUICK_REGIONS = ['Mumbai, Maharashtra', 'Nashik, Maharashtra', 'Pune, Maharashtra', 'Ludhiana, Punjab'];
 
-const FARM_PRESETS: { label: string; input: CropInput }[] = [
-  {
-    label: 'Monsoon Farm (Maharashtra)',
-    input: {
-      location: 'Nashik, Maharashtra',
-      soilType: 'Black',
-      soilPh: 6.8,
-      waterAvailability: 'medium',
-      temperature: 28,
-      season: 'kharif',
-      farmSize: 3,
-      previousCrop: 'Pulses / Dal'
-    }
-  },
-  {
-    label: 'Irrigated Farm (Punjab)',
-    input: {
-      location: 'Ludhiana, Punjab',
-      soilType: 'Alluvial',
-      soilPh: 6.6,
-      waterAvailability: 'irrigated',
-      temperature: 29,
-      season: 'kharif',
-      farmSize: 5,
-      previousCrop: 'Wheat'
-    }
-  },
-  {
-    label: 'Low-Water Dry Farm',
-    input: {
-      location: 'Solapur, Maharashtra',
-      soilType: 'Sandy',
-      soilPh: 7.0,
-      waterAvailability: 'low',
-      temperature: 34,
-      season: 'kharif',
-      farmSize: 2,
-      previousCrop: 'Fallow / Empty'
-    }
-  }
-];
-
 function getWaterPlainHint(waterReq: CropRecommendation['waterRequirement']): string {
   switch (waterReq) {
     case 'Low':
@@ -160,6 +118,77 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
   defaultFarmSize = 2.5
 }) => {
   const t = translations[language] || translations.en;
+
+  const soilOptions: SoilOption[] = [
+    { value: 'Loamy', title: t.soilLoamy, feel: t.soilLoamyFeel, swatchClass: 'bg-amber-900' },
+    { value: 'Black', title: t.soilBlack, feel: t.soilBlackFeel, swatchClass: 'bg-stone-800' },
+    { value: 'Alluvial', title: t.soilAlluvial, feel: t.soilAlluvialFeel, swatchClass: 'bg-amber-700' },
+    { value: 'Red', title: t.soilRed, feel: t.soilRedFeel, swatchClass: 'bg-red-700' },
+    { value: 'Clay', title: t.soilClay, feel: t.soilClayFeel, swatchClass: 'bg-stone-600' },
+    { value: 'Sandy', title: t.soilSandy, feel: t.soilSandyFeel, swatchClass: 'bg-amber-400' }
+  ];
+
+  const waterOptions: { value: CropInput['waterAvailability']; title: string; detail: string }[] = [
+    { value: 'low', title: t.waterLow, detail: t.waterLowDesc },
+    { value: 'medium', title: t.waterMed, detail: t.waterMedDesc },
+    { value: 'irrigated', title: t.waterIrr, detail: t.waterIrrDesc },
+    { value: 'high', title: t.waterHigh, detail: t.waterHighDesc }
+  ];
+
+  const seasonOptions: { value: CropInput['season']; title: string; months: string }[] = [
+    { value: 'kharif', title: t.seasonKharif, months: 'Jun – Oct' },
+    { value: 'rabi', title: t.seasonRabi, months: 'Oct – Mar' },
+    { value: 'zaid', title: t.seasonZaid, months: 'Mar – Jun' },
+    { value: 'year-round', title: t.seasonYear, months: '12 mo' }
+  ];
+
+  const phPresets: { label: string; hint: string; value: number }[] = [
+    { label: t.phSour, hint: t.phSourHint, value: 5.5 },
+    { label: t.phNormal, hint: t.phNormalHint, value: 6.5 },
+    { label: t.phSalty, hint: t.phSaltyHint, value: 8.0 }
+  ];
+
+  const farmPresets: { label: string; input: CropInput }[] = [
+    {
+      label: t.presetMonsoon,
+      input: {
+        location: 'Nashik, Maharashtra',
+        soilType: 'Black',
+        soilPh: 6.8,
+        waterAvailability: 'medium',
+        temperature: 28,
+        season: 'kharif',
+        farmSize: 3,
+        previousCrop: 'Pulses / Dal'
+      }
+    },
+    {
+      label: t.presetIrrigated,
+      input: {
+        location: 'Ludhiana, Punjab',
+        soilType: 'Alluvial',
+        soilPh: 6.6,
+        waterAvailability: 'irrigated',
+        temperature: 29,
+        season: 'kharif',
+        farmSize: 5,
+        previousCrop: 'Wheat'
+      }
+    },
+    {
+      label: t.presetDry,
+      input: {
+        location: 'Solapur, Maharashtra',
+        soilType: 'Sandy',
+        soilPh: 7.0,
+        waterAvailability: 'low',
+        temperature: 34,
+        season: 'kharif',
+        farmSize: 2,
+        previousCrop: 'Fallow / Empty'
+      }
+    }
+  ];
 
   const [formData, setFormData] = useState<CropInput>({
     location: defaultLocation,
@@ -217,9 +246,9 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
     setErrorMsg(null);
   };
 
-  const selectedSeasonObj = SEASON_OPTIONS.find(s => s.value === formData.season) || SEASON_OPTIONS[0];
-  const selectedWaterObj = WATER_OPTIONS.find(w => w.value === formData.waterAvailability) || WATER_OPTIONS[1];
-  const selectedSoilObj = SOIL_OPTIONS.find(s => s.value === formData.soilType) || SOIL_OPTIONS[0];
+  const selectedSeasonObj = seasonOptions.find(s => s.value === formData.season) || seasonOptions[0];
+  const selectedWaterObj = waterOptions.find(w => w.value === formData.waterAvailability) || waterOptions[1];
+  const selectedSoilObj = soilOptions.find(s => s.value === formData.soilType) || soilOptions[0];
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-12">
@@ -228,22 +257,21 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5">
           <div className="space-y-2 max-w-2xl">
             <p className="text-xs font-semibold text-emerald-300">
-              Simple 4-Step Crop Guide · Local Soil & Weather Match
+              {t.cropHeaderKicker}
             </p>
             <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
               {t.cropRecommendation}
             </h1>
             <p className="text-emerald-100 text-sm leading-relaxed">
-              {t.cropRecSubtitle ||
-                'Answer 4 quick questions about your land and water to see the best crop to grow, sowing dates, and easy care steps.'}
+              {t.cropRecSubtitle}
             </p>
           </div>
 
           {/* 1-Tap Farm Examples */}
           <div className="space-y-1.5 shrink-0">
-            <div className="text-xs font-medium text-emerald-200">Quick fill examples:</div>
+            <div className="text-xs font-medium text-emerald-200">{t.quickFillLabel}</div>
             <div className="flex flex-wrap gap-2">
-              {FARM_PRESETS.map((preset) => (
+              {farmPresets.map((preset) => (
                 <button
                   key={preset.label}
                   type="button"
@@ -268,7 +296,7 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
           <section className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-base sm:text-lg font-bold text-stone-900">
-                1. Where is your field & how big is it?
+                {t.cropStep1}
               </h2>
               <VoiceAssistant
                 onVoiceInput={handleVoiceInput('location')}
@@ -280,7 +308,7 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
             <div className="grid sm:grid-cols-12 gap-4">
               <div className="sm:col-span-7 space-y-2">
                 <label className="block text-sm font-semibold text-stone-800">
-                  Village, District, or State
+                  {t.villageDistrictLabel}
                 </label>
                 <div className="relative">
                   <MapPin className="w-4 h-4 text-emerald-700 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -289,7 +317,7 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
                     required
                     value={formData.location}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    placeholder="Type your city or district"
+                    placeholder={t.searchPlaceholder}
                     className="w-full pl-10 pr-3.5 py-2.5 min-h-[44px] rounded-xl border border-stone-300 text-stone-900 text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none"
                   />
                 </div>
@@ -313,7 +341,7 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
 
               <div className="sm:col-span-5 space-y-2">
                 <label className="block text-sm font-semibold text-stone-800">
-                  Land Size (Acres)
+                  {t.landSizeAcres}
                 </label>
                 <div className="flex items-center gap-2">
                   <button
@@ -354,7 +382,7 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
                     <Plus className="w-4 h-4" />
                   </button>
                 </div>
-                <p className="text-xs text-stone-500">Tap + or - to adjust acres</p>
+                <p className="text-xs text-stone-500">{t.tapAdjustAcres}</p>
               </div>
             </div>
           </section>
@@ -365,15 +393,15 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
           <section className="space-y-4">
             <div>
               <h2 className="text-base sm:text-lg font-bold text-stone-900">
-                2. What does your soil look and feel like?
+                {t.cropStep2}
               </h2>
               <p className="text-xs text-stone-600 mt-0.5">
-                Pick the soil that looks closest to your field.
+                {t.cropStep2Hint}
               </p>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-              {SOIL_OPTIONS.map((soil) => {
+              {soilOptions.map((soil) => {
                 const active = formData.soilType === soil.value;
                 return (
                   <button
@@ -403,20 +431,20 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
             <div className="space-y-2 pt-1">
               <div className="flex items-center justify-between gap-2">
                 <label className="text-sm font-semibold text-stone-800">
-                  Soil Nature (Acidic, Normal, or Salty)
+                  {t.soilNatureLabel}
                 </label>
                 <button
                   type="button"
                   onClick={() => setShowExactPh(!showExactPh)}
                   className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 inline-flex items-center gap-1 cursor-pointer"
                 >
-                  <span>Have a Soil Health Card?</span>
+                  <span>{t.haveSoilCard}</span>
                   {showExactPh ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                 </button>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                {PH_PRESETS.map((preset) => {
+                {phPresets.map((preset) => {
                   const isSelected =
                     (preset.value < 6 && formData.soilPh < 6) ||
                     (preset.value >= 6 && preset.value <= 7.4 && formData.soilPh >= 6 && formData.soilPh <= 7.4) ||
@@ -443,7 +471,7 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
               {showExactPh && (
                 <div className="pt-2 px-3 py-3 rounded-xl bg-stone-50 border border-stone-200 space-y-1.5">
                   <div className="flex items-center justify-between text-xs font-semibold text-stone-700">
-                    <span>Exact Soil pH from Soil Test Card</span>
+                    <span>pH</span>
                     <span className="text-emerald-800 font-bold tabular-nums">pH {formData.soilPh}</span>
                   </div>
                   <input
@@ -465,17 +493,17 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
           {/* Step 3: Water, Season & Weather */}
           <section className="space-y-4">
             <h2 className="text-base sm:text-lg font-bold text-stone-900">
-              3. Water source & planting season
+              {t.cropStep3}
             </h2>
 
             {/* Water Options */}
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-stone-800 flex items-center gap-1.5">
                 <Droplet className="w-4 h-4 text-sky-600" />
-                <span>How do you water your crops?</span>
+                <span>{t.howWaterLabel}</span>
               </label>
               <div className="grid grid-cols-2 gap-2.5">
-                {WATER_OPTIONS.map((opt) => {
+                {waterOptions.map((opt) => {
                   const active = formData.waterAvailability === opt.value;
                   return (
                     <button
@@ -501,10 +529,10 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
               <div className="sm:col-span-7 space-y-2">
                 <label className="block text-sm font-semibold text-stone-800 flex items-center gap-1.5">
                   <Calendar className="w-4 h-4 text-emerald-700" />
-                  <span>When will you plant?</span>
+                  <span>{t.whenPlantLabel}</span>
                 </label>
                 <div className="grid grid-cols-2 gap-2">
-                  {SEASON_OPTIONS.map((opt) => {
+                  {seasonOptions.map((opt) => {
                     const active = formData.season === opt.value;
                     return (
                       <button
@@ -528,18 +556,18 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
               <div className="sm:col-span-5 space-y-2">
                 <label className="block text-sm font-semibold text-stone-800 flex items-center gap-1.5">
                   <Thermometer className="w-4 h-4 text-amber-600" />
-                  <span>Usual Weather</span>
+                  <span>{t.usualWeatherLabel}</span>
                 </label>
                 <div className="grid grid-cols-3 gap-1.5">
                   {[
-                    { label: 'Cool', temp: 18 },
-                    { label: 'Warm', temp: 28 },
-                    { label: 'Hot', temp: 36 }
+                    { label: t.weatherCool, temp: 18 },
+                    { label: t.weatherWarm, temp: 28 },
+                    { label: t.weatherHot, temp: 36 }
                   ].map((w) => {
                     const active = Math.abs(formData.temperature - w.temp) <= 3;
                     return (
                       <button
-                        key={w.label}
+                        key={w.temp}
                         type="button"
                         onClick={() => setFormData({ ...formData, temperature: w.temp })}
                         className={`py-2 px-1 min-h-[48px] rounded-xl border text-center transition-colors cursor-pointer ${
@@ -555,7 +583,7 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
                   })}
                 </div>
                 <div className="flex items-center justify-between text-xs text-stone-600 pt-1">
-                  <span>Exact temp:</span>
+                  <span>{t.exactTempLabel}</span>
                   <div className="inline-flex items-center gap-1.5">
                     <button
                       type="button"
@@ -592,10 +620,10 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
           <section className="space-y-3">
             <div>
               <h2 className="text-base sm:text-lg font-bold text-stone-900">
-                4. What did you grow on this land last time?
+                {t.cropStep4}
               </h2>
               <p className="text-xs text-stone-600 mt-0.5">
-                Changing crops each season keeps your soil rich and reduces pests.
+                {t.cropStep4Hint}
               </p>
             </div>
 
@@ -623,7 +651,7 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
               type="text"
               value={formData.previousCrop}
               onChange={(e) => setFormData({ ...formData, previousCrop: e.target.value })}
-              placeholder="Or type another crop name (e.g. Tomato, Onion, Maize)"
+              placeholder="Tomato, Onion, Maize..."
               className="w-full px-3.5 py-2.5 min-h-[44px] rounded-xl border border-stone-300 text-stone-900 text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none"
             />
           </section>
@@ -637,7 +665,7 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
             {loading ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                <span>Finding the best crop for your farm...</span>
+                <span>{t.checkingCropsMsg}</span>
               </>
             ) : (
               <>
@@ -660,32 +688,32 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
           {!result && !loading && (
             <div className="bg-white rounded-2xl p-6 sm:p-7 border border-stone-200 space-y-5">
               <div className="space-y-1.5">
-                <p className="text-xs font-semibold text-emerald-700">Your Farm Summary</p>
-                <h3 className="text-xl font-bold text-stone-900">Ready to check the best crop</h3>
+                <p className="text-xs font-semibold text-emerald-700">{t.farmSummaryKicker}</p>
+                <h3 className="text-xl font-bold text-stone-900">{t.readyCheckCrop}</h3>
                 <p className="text-sm text-stone-600 leading-relaxed">
-                  Review your choices below, then tap <strong>"{t.getAiRecommendation}"</strong> to see your crop plan.
+                  <strong>{t.getAiRecommendation}</strong>
                 </p>
               </div>
 
               <dl className="divide-y divide-stone-200 border-y border-stone-200 text-sm">
                 <div className="py-2.5 flex items-center justify-between gap-4">
-                  <dt className="text-stone-500">Location</dt>
-                  <dd className="font-semibold text-stone-900 text-right">{formData.location || 'Not set'}</dd>
+                  <dt className="text-stone-500">{t.locationLabel}</dt>
+                  <dd className="font-semibold text-stone-900 text-right">{formData.location || '-'}</dd>
                 </div>
                 <div className="py-2.5 flex items-center justify-between gap-4">
-                  <dt className="text-stone-500">Land Size</dt>
-                  <dd className="font-semibold text-stone-900 tabular-nums">{formData.farmSize} acres</dd>
+                  <dt className="text-stone-500">{t.landSizeAcres}</dt>
+                  <dd className="font-semibold text-stone-900 tabular-nums">{formData.farmSize}</dd>
                 </div>
                 <div className="py-2.5 flex items-center justify-between gap-4">
-                  <dt className="text-stone-500">Soil Type</dt>
+                  <dt className="text-stone-500">{t.cropStep2.replace(/^2\.\s*/, '')}</dt>
                   <dd className="font-semibold text-stone-900">{selectedSoilObj.title}</dd>
                 </div>
                 <div className="py-2.5 flex items-center justify-between gap-4">
-                  <dt className="text-stone-500">Water Supply</dt>
+                  <dt className="text-stone-500">{t.waterNeeded}</dt>
                   <dd className="font-semibold text-stone-900">{selectedWaterObj.title}</dd>
                 </div>
                 <div className="py-2.5 flex items-center justify-between gap-4">
-                  <dt className="text-stone-500">Planting Season</dt>
+                  <dt className="text-stone-500">{t.whenPlantLabel}</dt>
                   <dd className="font-semibold text-stone-900">
                     {selectedSeasonObj.title} ({selectedSeasonObj.months})
                   </dd>
@@ -693,19 +721,19 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
               </dl>
 
               <div className="space-y-2 text-xs text-stone-600">
-                <div className="font-semibold text-stone-800">What you will get:</div>
+                <div className="font-semibold text-stone-800">{t.whatYouGet}</div>
                 <ul className="space-y-1.5">
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-emerald-700 shrink-0" />
-                    <span>Best matching crop & sowing dates</span>
+                    <span>{t.bestTimeSow}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-emerald-700 shrink-0" />
-                    <span>Days to harvest, water needs & expected yield</span>
+                    <span>{t.readyHarvest} · {t.expectedHarvest}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-emerald-700 shrink-0" />
-                    <span>3 easy care steps + audio read-aloud</span>
+                    <span>{t.whatToDoSteps} · {t.listenAloud}</span>
                   </li>
                 </ul>
               </div>
@@ -719,10 +747,10 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
               </div>
               <div className="space-y-1">
                 <h3 className="text-lg font-bold text-stone-900">
-                  Checking crops for your land...
+                  {t.checkingCropsMsg}
                 </h3>
                 <p className="text-sm text-stone-600 max-w-xs mx-auto leading-relaxed">
-                  Matching {selectedSoilObj.title.toLowerCase()}, {selectedWaterObj.title.toLowerCase()}, and {selectedSeasonObj.title.toLowerCase()} weather.
+                  {selectedSoilObj.title} · {selectedWaterObj.title} · {selectedSeasonObj.title}
                 </p>
               </div>
             </div>
@@ -734,7 +762,7 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
               <div className="space-y-3 pb-5 border-b border-stone-200">
                 <div className="flex items-center justify-between gap-3 text-xs text-stone-600">
                   <span className="font-semibold text-emerald-800">
-                    Best Crop Match · <span className="tabular-nums">{result.data.suitabilityScore}%</span> Fit for Your Land
+                    {t.bestCropMatch} · <span className="tabular-nums">{result.data.suitabilityScore}%</span> {t.fitForLand}
                   </span>
                   <button
                     type="button"
@@ -742,7 +770,7 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
                     className="inline-flex items-center gap-1 text-stone-500 hover:text-stone-800 font-medium cursor-pointer"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Clear</span>
+                    <span>{t.clearBtn}</span>
                   </button>
                 </div>
 
@@ -753,7 +781,7 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
                 {/* Prominent Audio Read-Aloud */}
                 <div>
                   <VoiceAssistant
-                    textToRead={`Best crop for your farm: ${result.data.cropName}. Suitability is ${result.data.suitabilityScore} percent. Best time to sow: ${result.data.recommendedPlantingPeriod}. Ready to harvest in ${result.data.growingDuration}. Expected harvest: ${result.data.expectedYield}. ${result.data.aiExplanation} Steps to follow: ${(result.data.keyCareTips || []).join('. ')}`}
+                    textToRead={`${t.bestCropMatch}: ${result.data.cropName}. ${result.data.suitabilityScore}%. ${t.bestTimeSow}: ${result.data.recommendedPlantingPeriod}. ${t.readyHarvest}: ${result.data.growingDuration}. ${t.expectedHarvest}: ${result.data.expectedYield}. ${result.data.aiExplanation} ${(result.data.keyCareTips || []).join('. ')}`}
                     language={language}
                   />
                 </div>
@@ -762,21 +790,21 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
               {/* 4 Plain-Language Key Facts */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3.5 rounded-xl bg-stone-50 border border-stone-200">
-                  <div className="text-xs font-medium text-stone-600">Best Time to Sow</div>
+                  <div className="text-xs font-medium text-stone-600">{t.bestTimeSow}</div>
                   <div className="text-sm sm:text-base font-bold text-stone-900 mt-1 tabular-nums">
                     {result.data.recommendedPlantingPeriod}
                   </div>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-stone-50 border border-stone-200">
-                  <div className="text-xs font-medium text-stone-600">Ready to Harvest</div>
+                  <div className="text-xs font-medium text-stone-600">{t.readyHarvest}</div>
                   <div className="text-sm sm:text-base font-bold text-stone-900 mt-1 tabular-nums">
                     {result.data.growingDuration}
                   </div>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-stone-50 border border-stone-200">
-                  <div className="text-xs font-medium text-stone-600">Water Needed</div>
+                  <div className="text-xs font-medium text-stone-600">{t.waterNeeded}</div>
                   <div className="text-sm sm:text-base font-bold text-stone-900 mt-1">
                     {result.data.waterRequirement}
                   </div>
@@ -786,19 +814,19 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-stone-50 border border-stone-200">
-                  <div className="text-xs font-medium text-stone-600">Expected Harvest</div>
+                  <div className="text-xs font-medium text-stone-600">{t.expectedHarvest}</div>
                   <div className="text-sm sm:text-base font-bold text-stone-900 mt-1 tabular-nums">
                     {result.data.expectedYield}
                   </div>
                   <div className="text-[11px] text-emerald-800 font-semibold mt-0.5 tabular-nums">
-                    Est. Return: {result.data.estimatedProfitability}
+                    {result.data.estimatedProfitability}
                   </div>
                 </div>
               </div>
 
               {/* Plain-English Why It Fits */}
               <div className="space-y-1.5">
-                <h4 className="text-sm font-bold text-stone-900">Why this fits your farm</h4>
+                <h4 className="text-sm font-bold text-stone-900">{t.whyFitsFarm}</h4>
                 <p className="text-sm text-stone-700 leading-relaxed">
                   {result.data.aiExplanation}
                 </p>
@@ -812,7 +840,7 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
               {/* Step-by-Step Care Checklist */}
               {result.data.keyCareTips && result.data.keyCareTips.length > 0 && (
                 <div className="space-y-2.5 pt-2 border-t border-stone-200">
-                  <h4 className="text-sm font-bold text-stone-900">What to do step by step</h4>
+                  <h4 className="text-sm font-bold text-stone-900">{t.whatToDoSteps}</h4>
                   <ol className="space-y-2.5">
                     {result.data.keyCareTips.map((tip, idx) => (
                       <li key={idx} className="text-sm text-stone-800 flex items-start gap-3">
@@ -839,7 +867,7 @@ export const CropRecommendationView: React.FC<CropRecommendationViewProps> = ({
                   }`}
                 >
                   <Save className="w-4 h-4" />
-                  <span>{saved ? (t.savedToFarm || 'Saved to My Farm ✓') : (t.saveToFarm || 'Save to My Farm')}</span>
+                  <span>{saved ? t.savedToFarm : t.saveToFarm}</span>
                 </button>
               </div>
             </div>

@@ -21,7 +21,7 @@ import {
   UserPlus
 } from 'lucide-react';
 import { FarmerProfile, Language } from '../types';
-import { translations, languageNames } from '../lib/translations';
+import { translations, languageNames, languageFonts } from '../lib/translations';
 
 interface LoginPageProps {
   currentUser: FarmerProfile | null;
@@ -301,15 +301,16 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
           {/* Language Selector */}
           <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-stone-200 shadow-sm text-xs">
-            <span className="text-stone-500 font-medium hidden sm:inline">Language:</span>
+            <span className="text-stone-500 font-medium hidden sm:inline">{t.preferredLangLabel}:</span>
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value as Language)}
               aria-label="Select language for login"
+              style={{ fontFamily: (languageFonts[language] || languageFonts.en).fontFamily }}
               className="font-bold text-emerald-900 bg-transparent focus:outline-none cursor-pointer"
             >
               {(Object.keys(languageNames) as Language[]).map((lang) => (
-                <option key={lang} value={lang}>
+                <option key={lang} value={lang} style={{ fontFamily: languageFonts[lang].fontFamily }}>
                   {languageNames[lang].nativeName} ({languageNames[lang].name})
                 </option>
               ))}
@@ -339,10 +340,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                   </div>
                   <div>
                     <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                      Farm<span className="text-emerald-400">Ease</span>
+                      {language === 'en' ? (
+                        <>Farm<span className="text-emerald-400">Ease</span></>
+                      ) : (
+                        t.appName
+                      )}
                     </h1>
                     <p className="text-xs text-emerald-200/80 font-medium">
-                      Smart Farming • Better Yields
+                      {t.brandTagline}
                     </p>
                   </div>
                 </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Volume2, VolumeX, Mic, MicOff } from 'lucide-react';
 import { Language } from '../types';
+import { translations } from '../lib/translations';
 
 interface VoiceAssistantProps {
   textToRead?: string;
@@ -29,6 +30,7 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [supported, setSupported] = useState(true);
+  const t = translations[language] || translations.en;
 
   useEffect(() => {
     if (!('speechSynthesis' in window)) {
@@ -111,7 +113,7 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({
           } ${btnPadding}`}
         >
           {isSpeaking ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-emerald-700" />}
-          <span>{isSpeaking ? 'Stop Audio' : 'Listen Aloud'}</span>
+          <span>{isSpeaking ? t.stopAudio : t.listenAloud}</span>
         </button>
       )}
 
@@ -119,15 +121,15 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = ({
         <button
           type="button"
           onClick={handleListen}
-          title={isListening ? 'Listening...' : 'Speak your input'}
-          className={`inline-flex items-center gap-1.5 font-medium rounded-full transition-all shadow-xs ${
+          title={isListening ? t.listeningNow : t.voiceInput}
+          className={`inline-flex items-center gap-1.5 font-medium rounded-full transition-all shadow-xs cursor-pointer ${
             isListening
               ? 'bg-red-600 text-white animate-bounce ring-2 ring-red-400 ring-offset-1'
               : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300'
           } ${btnPadding}`}
         >
           {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4 text-emerald-600" />}
-          <span>{isListening ? 'Listening...' : 'Voice Input'}</span>
+          <span>{isListening ? t.listeningNow : t.voiceInput}</span>
         </button>
       )}
     </div>

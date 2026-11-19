@@ -31,17 +31,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             {/* Top AI Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-800/80 border border-emerald-600/80 text-emerald-300 text-xs sm:text-sm font-semibold shadow-inner">
               <Sparkles className="w-4 h-4 text-amber-300 animate-spin-slow" />
-              <span>Next-Gen Agricultural Intelligence Engine</span>
+              <span>{t.heroBadge}</span>
             </div>
 
             {/* Main Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1]">
-              {t.heroHeading || 'Smart Farming. Better Yields.'}
+              {t.heroHeading}
             </h1>
 
             {/* Subheading */}
             <p className="text-lg sm:text-xl text-emerald-100/90 font-normal leading-relaxed max-w-2xl mx-auto lg:mx-0">
-              {t.heroSubheading || 'FarmEase uses AI, weather intelligence, and image analysis to help you grow healthier crops and make smarter farming decisions.'}
+              {t.heroSubheading}
             </p>
 
             {/* CTA Buttons */}
@@ -60,7 +60,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl bg-amber-400 hover:bg-amber-300 text-stone-950 font-black text-base shadow-lg hover:shadow-amber-400/25 transform hover:-translate-y-0.5 transition-all cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4 text-stone-900" />
-                  <span>Farmer Sign Up / Login</span>
+                  <span>{t.farmerSignupLogin}</span>
                 </button>
               )}
 
@@ -76,15 +76,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <div className="pt-6 border-t border-emerald-800/60 grid grid-cols-3 gap-4 text-center lg:text-left">
               <div>
                 <div className="text-2xl sm:text-3xl font-black text-amber-300">95%+</div>
-                <div className="text-xs sm:text-sm text-emerald-200">AI Diagnostic Accuracy</div>
+                <div className="text-xs sm:text-sm text-emerald-200">{t.statAccuracy}</div>
               </div>
               <div>
-                <div className="text-2xl sm:text-3xl font-black text-emerald-300">6 Languages</div>
-                <div className="text-xs sm:text-sm text-emerald-200">Regional Voice Ready</div>
+                <div className="text-2xl sm:text-3xl font-black text-emerald-300">{t.statLanguages}</div>
+                <div className="text-xs sm:text-sm text-emerald-200">{t.statLanguagesSub}</div>
               </div>
               <div>
                 <div className="text-2xl sm:text-3xl font-black text-white">24/7</div>
-                <div className="text-xs sm:text-sm text-emerald-200">Weather & Pest Monitor</div>
+                <div className="text-xs sm:text-sm text-emerald-200">{t.statMonitor}</div>
               </div>
             </div>
           </div>
@@ -100,15 +100,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       👨‍🌾
                     </div>
                     <div>
-                      <div className="text-sm font-bold text-white">FarmEase Assistant</div>
+                      <div className="text-sm font-bold text-white">{t.heroCardTitle}</div>
                       <div className="text-xs text-emerald-300 flex items-center gap-1">
                         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                        Live Field Diagnostics
+                        {t.heroCardSub}
                       </div>
                     </div>
                   </div>
                   <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-800 text-emerald-200">
-                    AI Active
+                    {t.excellent}
                   </span>
                 </div>
 
@@ -116,13 +116,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 <div className="bg-emerald-900/90 rounded-xl p-3.5 border border-emerald-700 space-y-2">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-semibold text-emerald-200 flex items-center gap-1">
-                      <Leaf className="w-3.5 h-3.5 text-emerald-400" /> Plant Scan Analysis
+                      <Leaf className="w-3.5 h-3.5 text-emerald-400" /> {t.heroScanLabel}
                     </span>
-                    <span className="text-amber-300 font-bold">94% Confidence</span>
+                    <span className="text-amber-300 font-bold">94% {t.confidenceLabel}</span>
                   </div>
-                  <div className="text-sm font-bold text-white">Tomato Early Blight Detected</div>
+                  <div className="text-sm font-bold text-white">{t.heroScanDisease}</div>
                   <div className="text-xs text-emerald-200 leading-snug">
-                    Action: Apply copper fungicide spray before 10 AM. Delay irrigation due to afternoon rain.
+                    {t.heroScanAction}
                   </div>
                 </div>
 
@@ -131,15 +131,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   <div className="bg-emerald-900/60 rounded-xl p-3 border border-emerald-800 flex items-center gap-3">
                     <CloudSun className="w-7 h-7 text-amber-300" />
                     <div>
-                      <div className="text-xs text-emerald-300">Temp & Rain</div>
-                      <div className="text-sm font-bold text-white">29°C • 35% Rain</div>
+                      <div className="text-xs text-emerald-300">{t.heroTempRain}</div>
+                      <div className="text-sm font-bold text-white">29°C • 35%</div>
                     </div>
                   </div>
                   <div className="bg-emerald-900/60 rounded-xl p-3 border border-emerald-800 flex items-center gap-3">
                     <Cpu className="w-7 h-7 text-emerald-300" />
                     <div>
-                      <div className="text-xs text-emerald-300">Best Crop</div>
-                      <div className="text-sm font-bold text-white">Basmati Rice</div>
+                      <div className="text-xs text-emerald-300">{t.heroBestCrop}</div>
+                      <div className="text-sm font-bold text-white">{t.heroBestCropName}</div>
                     </div>
                   </div>
                 </div>
@@ -149,8 +149,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <div className="absolute -bottom-4 -left-4 sm:-left-6 bg-amber-400 text-amber-950 rounded-2xl p-3 shadow-xl border border-amber-300 flex items-center gap-2.5">
                 <CheckCircle2 className="w-6 h-6 text-amber-950" />
                 <div>
-                  <div className="text-xs font-black uppercase tracking-wider">Farmer Friendly</div>
-                  <div className="text-xs font-semibold">Voice & Regional Text Support</div>
+                  <div className="text-xs font-black uppercase tracking-wider">{t.heroFriendlyTitle}</div>
+                  <div className="text-xs font-semibold">{t.heroFriendlySub}</div>
                 </div>
               </div>
             </div>

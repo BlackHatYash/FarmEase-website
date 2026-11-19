@@ -14,37 +14,37 @@ export const FeatureCards: React.FC<FeatureCardsProps> = ({ onSelectFeature, lan
   const features = [
     {
       id: 'crop-recommendation',
-      title: '🌱 AI Crop Recommendation',
-      subtitle: 'Soil & Climate Matched Selection',
-      description: 'Enter your soil type, pH, location, and irrigation to receive personalized crop matches complete with yield projections, duration, and care tips.',
-      tag: 'Smart Selection',
+      title: t.featCropTitle,
+      subtitle: t.featCropSub,
+      description: t.featCropDesc,
+      tag: t.featCropTag,
       color: 'from-emerald-600 to-green-700',
       badgeBg: 'bg-emerald-100 text-emerald-800'
     },
     {
       id: 'disease-detection',
-      title: '📷 Plant Disease Detection',
-      subtitle: 'Instant Leaf Image Diagnostics',
-      description: 'Upload a leaf photo or capture with your smartphone camera. Our AI identifies diseases, symptoms, causes, and recommended treatments in seconds.',
-      tag: '94% Accuracy',
+      title: t.featDiseaseTitle,
+      subtitle: t.featDiseaseSub,
+      description: t.featDiseaseDesc,
+      tag: t.featDiseaseTag,
       color: 'from-amber-600 to-orange-700',
       badgeBg: 'bg-amber-100 text-amber-900'
     },
     {
       id: 'weather',
-      title: '🌦️ Real-Time Weather Intelligence',
-      subtitle: 'Farming-Specific Microclimate Advice',
-      description: 'Get precise temperature, humidity, rainfall probability, and 7-day forecasts along with actionable advice for irrigation, spraying, and disease risk.',
-      tag: 'Live Forecast',
+      title: t.featWeatherTitle,
+      subtitle: t.featWeatherSub,
+      description: t.featWeatherDesc,
+      tag: t.featWeatherTag,
       color: 'from-sky-600 to-blue-700',
       badgeBg: 'bg-sky-100 text-sky-900'
     },
     {
       id: 'farm-insights',
-      title: '📊 Smart Farm Insights',
-      subtitle: 'Data-Driven Yield & Moisture Analytics',
-      description: 'Monitor your farm health score, track soil moisture trends over time, review disease scan history, and optimize your irrigation schedules.',
-      tag: 'Analytics',
+      title: t.featInsightsTitle,
+      subtitle: t.featInsightsSub,
+      description: t.featInsightsDesc,
+      tag: t.featInsightsTag,
       color: 'from-teal-600 to-emerald-800',
       badgeBg: 'bg-teal-100 text-teal-900'
     }
@@ -56,13 +56,13 @@ export const FeatureCards: React.FC<FeatureCardsProps> = ({ onSelectFeature, lan
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-600" /> Key Modules
+            <Sparkles className="w-3.5 h-3.5 text-emerald-600" /> {t.featuresBadge}
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-stone-900 tracking-tight">
-            Complete AI Suite Built for Farmers
+            {t.featuresHeading}
           </h2>
           <p className="text-stone-600 text-base sm:text-lg">
-            Empower your farm with intelligent tools designed for practical, daily decision-making in the field.
+            {t.featuresSubheading}
           </p>
         </div>
 
@@ -99,7 +99,7 @@ export const FeatureCards: React.FC<FeatureCardsProps> = ({ onSelectFeature, lan
               </div>
 
               <div className="pt-5 mt-4 border-t border-stone-100 flex items-center text-xs font-bold text-emerald-700 group-hover:text-emerald-800">
-                <span>Explore Module</span>
+                <span>{t.exploreModule}</span>
                 <ArrowRight className="w-3.5 h-3.5 ml-1.5 group-hover:translate-x-1 transition-transform" />
               </div>
             </div>
